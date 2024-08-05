@@ -1,0 +1,13 @@
+{
+   "name": "PVSchulz",
+   "short_name": "PVSchulz",
+   "start_url": "/",
+   "display": "standalone",
+   "icons": [
+      {
+         "src": "/assets/images/pwa_icon.png",
+         "sizes": "512x512",
+         "type": "image/png"
+      }
+   ]
+}
