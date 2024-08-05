@@ -5,5 +5,5 @@
 tmp/
 
 # Ignoriere eine bestimmte Datei
-/telegram.py
-/.DS_Store
+telegram.py
+.DS_Store
