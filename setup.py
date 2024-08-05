@@ -15,7 +15,7 @@ def autostart():
       lines = file.readlines()
       for i, line in enumerate(lines):
          if line.strip() == 'exit 0':
-            lines.insert(i, 'cd /home/merlin/pvschulz && sudo python3 /home/merlin/pvschulz/main.py &\n')
+            lines.insert(i, 'cd /home/merlin/pvschulz && sudo python3 main.py &\n')
             break
       file.seek(0)
       file.writelines(lines)

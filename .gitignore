@@ -1,9 +1,2 @@
-# Ignoriere alle .log Dateien
-*.log
-
-# Ignoriere das Verzeichnis tmp/
-tmp/
-
-# Ignoriere eine bestimmte Datei
 telegram.py
 .DS_Store
