@@ -4,7 +4,7 @@ import server
 import logger
 import wifi
 
-# Disable Low Power Mode of the RPI's Wifi Module
+# Disable Low Power Mode of the RPI's Wifi Module for better reliability
 subprocess.run(['sudo', 'iwconfig', 'wlan0', 'power', 'off'])
 
 # Start Server and Logger

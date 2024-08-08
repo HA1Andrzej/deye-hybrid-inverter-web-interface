@@ -5,8 +5,9 @@ from datetime import UTC, datetime
 from telegram import sendTelegramMessage
 import os
 from shutil import copy2
+import dbManager
 
-###### Register Adresses ######
+###### Register Adresses for Deye Hybrid Inverter (48V-Series) ######
 # Source 1: https://diysolarforum.com/threads/modbus-comms-with-deye-inverter.46197/
 # Source 2: https://github.com/StephanJoubert/home_assistant_solarman/blob/main/custom_components/solarman/inverter_definitions/deye_sg04lp3.yaml
 registers = {
@@ -19,14 +20,17 @@ registers = {
    "p_inverter": {"address": 636, "isTwosComplement": False},
    "p_gen": {"address": 667, "isTwosComplement": True},
 }
+
+# If you want to disable battery limits, just set the register addr to -1
 batteryLimits = {
    "discharge": {"socLimit": 20, "register": 109, "enabledCurrent": 180, "disabledCurrent": 0},
    "charge": {"socLimit": 95, "register": 108, "enabledCurrent": 180, "disabledCurrent": 0}
 }
 
 def startLogging():
+   global cursor, conn
+   cursor, conn = dbManager.connect("database.db")
    connectToUsbAdapter("/dev/ttyUSB0")
-   connectToDataBase("database.db")
 
    # Log Data roughly once per second
    liveValueBuffer = {}
@@ -41,8 +45,8 @@ def startLogging():
          valueHistory.setdefault(key, []).append(value)
 
       # Save Live Data
-      cursor.execute("DELETE FROM live")
-      addRowToTable("live", liveValueBuffer)
+      dbManager.emptyTable("live")
+      dbManager.addRowToTable("live", liveValueBuffer)
       for key, value in liveValueBuffer.items():
          print(f"{key}: {value}")
       print("----------------")
@@ -53,7 +57,7 @@ def startLogging():
          prevTime = currentTime
          averages = {name: sum(valueHistory[name]) / len(valueHistory[name]) for name in valueHistory}
          valueHistory = {}
-         addRowToTable("logs", averages)
+         dbManager.addRowToTable("logs", averages)
 
       # Limit Battery SoC
       batt_soc = liveValueBuffer.get("batt_soc", 0)
@@ -75,24 +79,12 @@ def connectToUsbAdapter(port):
       try:
          if client.connect():
             print("Modbus connection successful")
-            break
+            return client
          else:
             print("Modbus connection failed, retrying in 1 second...")
       except Exception as e:
             print(f"Error during connection attempt: {e}, retrying in 1 second...")
       time.sleep(1)
-
-# Create and / or Connect to Database
-def connectToDataBase(path):
-   global cursor, conn
-   conn = sqlite3.connect(path)
-   cursor = conn.cursor()
-   #cursor.execute("VACUUM") # Bleibt manchmal unendlich lange hängen und blockiert alles andere
-   cursor.execute("CREATE TABLE IF NOT EXISTS live (timestamp INTEGER)")
-   cursor.execute("CREATE TABLE IF NOT EXISTS logs (timestamp INTEGER)")
-   cursor.execute("CREATE INDEX IF NOT EXISTS idx_timestamp ON logs (timestamp)")
-   conn.execute('PRAGMA journal_mode=WAL;')
-   conn.commit()
 
 # Read and Process Live Values
 def readLiveValues(buffer):
@@ -126,41 +118,29 @@ def checkAndWarn(buffer):
       sendTelegramMessage("🥳 Batterie voll")
    if batt_soc < chargeSocLimit - 10:
       notifications["batteryfull"] = False
-   # ToDo: Add more later - "Anomalies" (Anomalie erkannt: ...)
-
-# Adds a new row of data to a given table
-def addRowToTable(tableName, dict):
-   columns = ", ".join(dict.keys())
-   placeholders = ", ".join("?" * len(dict))
-   values = list(dict.values())
-   cursor.execute(f"PRAGMA table_info({tableName})")
-   existing_columns = {info[1] for info in cursor.fetchall()}
-   for key in dict.keys():
-      if key not in existing_columns:
-         cursor.execute(f"ALTER TABLE {tableName} ADD COLUMN {key} INTEGER DEFAULT 0")
-   cursor.execute(f"INSERT INTO {tableName} ({columns}) VALUES ({placeholders})", values)
+   # ToDo: Anomalies ("Anomalie erkannt: "...)
 
 # Backups the DataBase daily
 def backupDB():
-   backup_folder = 'dbBackups'
-   if not os.path.exists(backup_folder): os.makedirs(backup_folder)
-   newest_file_age = float('inf')
-   two_months_ago = time.time() - 2 * 30 * 24 * 60 * 60
-   for filename in os.listdir(backup_folder):
-      file_path = os.path.join(backup_folder, filename)
+   backupFolder = 'dbBackups'
+   if not os.path.exists(backupFolder): os.makedirs(backupFolder)
+   newestFileAge = float('inf')
+   oneMonthAgo = time.time() - 30 * 24 * 60 * 60
+   for filename in os.listdir(backupFolder):
+      file_path = os.path.join(backupFolder, filename)
       if os.path.isfile(file_path):
          file_age = time.time() - os.path.getmtime(file_path)
-         if file_age < newest_file_age:
-            newest_file_age = file_age
-         if file_age > two_months_ago:
+         if file_age < newestFileAge:
+            newestFileAge = file_age
+         if file_age > oneMonthAgo:
             os.remove(file_path)
-   if newest_file_age > 86_400:
+   if newestFileAge > 86_400:
       backup_date = datetime.now(UTC).strftime('%Y-%m-%d')
-      backup_file = os.path.join(backup_folder, f'database_{backup_date}.db')
-      backup_wal_file = os.path.join(backup_folder, f'database_{backup_date}.db-wal')
+      backup_file = os.path.join(backupFolder, f'database_{backup_date}.db')
+      backup_wal_file = os.path.join(backupFolder, f'database_{backup_date}.db-wal')
       copy2('database.db', backup_file)
       copy2('database.db-wal', backup_wal_file)
-      print("Created Backup")
+      print("DB Backup Successfull")
 
 # Reads the value of a register at the given address
 def readRegister(address):
@@ -178,6 +158,5 @@ def writeRegister(address, value, attemptCounter=0):
       if attemptCounter < 5: writeRegister(address, value, attemptCounter+1)
    else:
       print(f"Successfully wrote {value} to register {address}")
-
 
 ### End of File

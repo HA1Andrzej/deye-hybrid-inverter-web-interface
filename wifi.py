@@ -6,24 +6,22 @@ import time
 
 AP_SSID = "PVSchulz AP"
 AP_PASSWORD = "12341234"
-STARTUP_DELAY = 120 # Sekunden
-CHECK_INTERVAL = 30 # Sekunden
-AP_TIME = 20*60 # Sekunden
-WIFI_TIME = 120 # Sekunden
+STARTUP_DELAY = 2*60
+CHECK_INTERVAL = 30
+AP_TIME = 15*60
+WIFI_TIME = 2*60
 PING_ATTEMPTS = 5
 
 def startWatchdog():
    time.sleep(STARTUP_DELAY)
    while True:
-      time.sleep(CHECK_INTERVAL)
-      if isConnectedToWifi():
-         print("Connected to Wifi, no AP.")
-      else:
-         print("Not Connected to Wifi, starting AP...")
+      if not isConnectedToWifi():
+         print("No Wifi-Connection. Starting AP...")
          startAP()
          time.sleep(AP_TIME)
          stopAP()
          time.sleep(WIFI_TIME)
+      time.sleep(CHECK_INTERVAL)
 
 def isConnectedToWifi(host="8.8.8.8"):
    for attempt in range(PING_ATTEMPTS):
@@ -117,15 +115,52 @@ def stopAP():
       print(f"Fehler beim Stoppen des AP: {e}")
 
 
+import subprocess
+
 def connectNewNetwork(ssid, password):
-   # Lösche vorherige Verbindungen, die mit dem SSID übereinstimmen
+   # Lösche alle vorherigen Verbindungen
    connections = subprocess.run(['nmcli', '-t', '-f', 'NAME,UUID', 'connection', 'show'], capture_output=True, text=True).stdout
    for line in connections.splitlines():
       name, uuid = line.split(':')
-      if name == ssid:
-         subprocess.run(['nmcli', 'connection', 'delete', 'uuid', uuid])
+      try:
+         subprocess.run(['nmcli', 'connection', 'delete', 'uuid', uuid], check=True)
+      except subprocess.CalledProcessError:
+         print(f"Fehler beim Löschen der Verbindung {name} mit UUID {uuid}")
    # Neue WLAN-Verbindung hinzufügen
-   subprocess.run(['nmcli', 'device', 'wifi', 'connect', ssid, 'password', password])
+   try:
+      subprocess.run(['nmcli', 'device', 'wifi', 'connect', ssid, 'password', password], check=True)
+      print(f"Verbunden mit dem Netzwerk {ssid}")
+   except subprocess.CalledProcessError:
+      print(f"Fehler beim Verbinden mit dem Netzwerk {ssid}")
+   # Set Static IP again
+   try:
+      with open("/etc/static_ip.conf", "r") as file:
+         ip = file.read().strip()
+         if ip: setStaticIp(ip)
+   except Exception as e:
+      print(f"Error reading static IP configuration: {e}")
+   # Stop AP (if on)
+   subprocess.run("sudo systemctl stop NetworkManager", shell=True, check=True)
+   time.sleep(2)
+   stopAP()
+
+### Funktion zum Setzen einer statischen IP-Adresse:
+def setStaticIp(ip):
+   with open("/etc/static_ip.conf", "w") as file:
+      file.write(f"{ip}\n")
+   connections = subprocess.run(['nmcli', '-t', '-f', 'NAME,UUID', 'connection', 'show'], capture_output=True, text=True).stdout
+   for line in connections.splitlines():
+      name, uuid = line.split(':')
+      try:
+         subprocess.run(['sudo', 'nmcli', 'connection', 'modify', uuid,
+            'ipv4.addresses', f'{ip}/24',
+            'ipv4.gateway', f'{ip.rsplit(".", 1)[0]}.1',
+            'ipv4.dns', '8.8.8.8',
+            'ipv4.method', 'manual'], check=True)
+         print(f"Statische IP {ip} wurde erfolgreich gesetzt")
+      except subprocess.CalledProcessError:
+         print(f"Fehler beim Setzen der statischen IP {ip} für Verbindung {name}")
+
 
 
 # End of File
