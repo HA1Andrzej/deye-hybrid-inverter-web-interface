@@ -1,46 +1,111 @@
 ### Disclaimer
 
-_This is still a work in progress in a very early state. Although the software is functional, it is not guaranteed that it is safe to use for your system and that future updates will not break the database. This message will be removed, once everything's done and stable._
+_This project is currently in its early stages and is still under development. While the software is functional, it may not be entirely safe for your system, and future updates could potentially disrupt the database. This disclaimer will be removed once the project is complete and stable._
 
-# Deye Hybrid Inverter Solar Interface: SolarHub
+# SolarHub: Web Interface for Deye Hybrid Inverter
 
-This project realizes an fully integrated web based interface for the Deye Hybrid Solar Inverter (6kW, 8kW, 10kw, 12kW). The System reads all of the imporant data from the inverter at a high rate and save all the data in a database. Using the responsive Web Interface you can see all of the live information, as well as historical data and interesting statistics.
+SolarHub is a fully integrated web-based interface designed for the Deye Hybrid Solar Inverter (6kW, 8kW, 10kW, 12kW). The system continuously collects and stores critical data from the inverter at a high frequency. Through the responsive web interface, users can monitor real-time information, view historical data, and analyze important statistics.
 
 ![Screenshot of the Interface on Desktop](https://clippy.cc/postimg/684856207112)
 
 ### Features
 
-1. Real-time monitoring of power generation and consumption
-2. Historical data visualization
-3. Battery charge and discharge limits to maximize its life span
-4. Mobile-friendly responsive design
-5. Automatically starts an wifi AP when it looses its wifi connection. The web interface through that AP can be used to connect the system with a new network.
-6. Automatically creates periodical backups of the database when an USB Stick is plugged into the Raspberry Pi.
-7. ...
+1. Real-time monitoring of power generation and consumption.
+2. Visualization of historical data.
+3. Configurable battery charge and discharge limits to extend battery lifespan.
+4. Mobile-friendly, responsive design.
+5. Automatic Wi-Fi access point creation when the connection is lost, allowing users to connect the system to a new network via the web interface.
+6. Periodic database backups to a USB stick when plugged into the Raspberry Pi.
+7. Additional features planned for future updates.
 
-# What You Need
+# Prerequisites
 
-1. **Raspberry Pi.** It was tested on the Raspberry Pi 3B+, but is expected to work on other models as well.
-2. **USB to RS485 Converter & RJ45 Cable.** This will be needed for the Serial Connection betwenn the Pi and the Deye Inverter. I used [this one](https://www.amazon.de/dp/B09SB85W3J?psc=1&ref=ppx_yo2ov_dt_b_product_details) from Amazon, but others should also work just fine.
-3. **USB SSD.** While it is not absolutely necessary, it is recommended to boot the Pi from an SSD. This will not only maximize the speed and reliability, but it will also maximize the life span of the system, since most SD-Cards and USB-Sticks will probably not survive the conditions of one or two decades being continously acitve.
+1. **Raspberry Pi** – Tested on the Raspberry Pi 3B+, but should be compatible with other models.
+2. **USB to RS485 Converter & RJ45 Cable** – Required for the serial connection between the Raspberry Pi and the Deye Inverter. [This converter](https://www.amazon.de/dp/B09SB85W3J?psc=1&ref=ppx_yo2ov_dt_b_product_details) from Amazon was used, but others should work as well.
+3. **USB SSD** – While optional, using an SSD for booting the Raspberry Pi is recommended. It enhances speed, reliability, and extends the system’s lifespan, as most SD cards and USB sticks may not withstand continuous use over several years.
 
-# Setup
+# Setup Guide
+
+In this section, we'll walk you through the hardware and software setup for SolarHub, step by step. Even if you're new to working with Raspberry Pi or setting up solar inverters, this guide is designed to be easy to follow.
 
 ![Setup Diagram](https://clippy.cc/postimg/510832930572)
 
-### Hardware
+### Hardware Setup
 
-1. Cut end of the RJ45 Cable to expose the wires. We will only need three of these wires.
-2. Connect them to the RS485 Converter. **GND is RJ45 Pin 6**, **A is RJ45 Pin 7** and **B is RJ45 Pin 8**.
-3. Connect the other end of the RJ45 Cable with the "Modbus"-Port of the Inverter.
-4. Done
+1. **Prepare the RJ45 Cable:**
 
-### Software
+   -  Start by taking an RJ45 cable (also known as an Ethernet cable) and cut off one end to expose the internal wires.
+   -  Inside the cable, you will find eight small wires. For this setup, we only need three of these wires: one for ground (GND) and two for data (A and B).
 
-1. Install Raspberry Pi OS Lite onto the SSD. You can do so with the official Raspberry Pi Imager tool on any Windows, macOS or Linux machine. Setup SSH and Wifi for a headless start.
-2. Access your Pi using SSH or via an HDMI monitor, mouse and keyboard.
-3. Clone the Repository using `git clone https://github.com/MerlinHof/deye-hybrid-inverter-web-interface.git`
-4. Run the `setup.py` file using `sudo python3 deye-hybrid-inverter-web-interface/setup.py`
-5. Done
+2. **Connect the Wires to the RS485 Converter:**
+
+   -  Look at the wires from the RJ45 cable and identify the ones connected to the following pins:
+      -  **Pin 6 (GND):** This wire will be the ground connection.
+      -  **Pin 7 (A):** This wire carries the positive data signal.
+      -  **Pin 8 (B):** This wire carries the negative data signal.
+   -  Connect these wires to the corresponding terminals on the RS485 converter:
+      -  **GND wire to GND terminal**
+      -  **A wire to A terminal**
+      -  **B wire to B terminal**
+   -  If you're unsure about identifying the wires or making the connections, refer to a guide on RJ45 pinouts or ask for assistance.
+
+3. **Connect the RS485 Converter to the Inverter:**
+
+   -  Once the wires are connected to the RS485 converter, plug the other end of the RJ45 cable into the "Modbus" port on the Deye Inverter.
+   -  The RS485 converter will likely connect to your Raspberry Pi via USB.
+
+4. **Power On and Verify Connections:**
+   -  Power on your Raspberry Pi and ensure that all connections are secure. If everything is connected correctly, the hardware setup is complete.
+
+### Software Setup
+
+Now that your hardware is set up, we can move on to setting up the software on the Raspberry Pi.
+
+1. **Prepare the SSD:**
+
+   -  To begin, you'll need to install the Raspberry Pi OS Lite on your SSD. If you haven't already, download the [Raspberry Pi Imager tool](https://www.raspberrypi.org/software/) on your computer. This tool works on Windows, macOS, and Linux.
+   -  Insert your SSD into your computer using a USB adapter.
+   -  Open the Raspberry Pi Imager, select "Raspberry Pi OS Lite" as the operating system, and choose your SSD as the storage device.
+   -  Before writing the OS to the SSD, click on the settings icon (⚙️) in the imager to configure SSH (enable SSH) and Wi-Fi (enter your Wi-Fi credentials). This will allow you to set up the Raspberry Pi without needing to connect a keyboard, mouse, or monitor (a "headless" setup).
+   -  Click "Write" and wait for the process to complete.
+
+2. **Start the Raspberry Pi:**
+
+   -  Once the Raspberry Pi OS is installed, remove the SSD from your computer and insert it into your Raspberry Pi.
+   -  Power on the Raspberry Pi. If you’ve configured everything correctly, it should connect to your Wi-Fi network.
+
+3. **Access the Raspberry Pi via SSH:**
+
+   -  If you’re using a Windows machine, you can use [PuTTY](https://www.putty.org/) to connect to your Raspberry Pi via SSH. On macOS and Linux, you can use the Terminal application.
+   -  Open your SSH client and connect to your Raspberry Pi using the IP address of your Pi (you can find this in your router’s device list if you’re not sure). The command to connect via SSH will look something like this:
+      ```bash
+      ssh pi@<your-pi-ip-address>
+      ```
+   -  Replace `<your-pi-ip-address>` with the actual IP address. The default password for the Raspberry Pi OS is `raspberry`.
+
+4. **Clone the SolarHub Repository:**
+
+   -  Now that you’re connected to your Raspberry Pi, clone the SolarHub repository by running the following command:
+      ```bash
+      git clone https://github.com/MerlinHof/deye-hybrid-inverter-web-interface.git
+      ```
+   -  This command will download all the necessary files and scripts to your Raspberry Pi.
+
+5. **Run the Setup Script:**
+
+   -  Navigate to the directory where the repository was cloned:
+      ```bash
+      cd deye-hybrid-inverter-web-interface
+      ```
+   -  Run the setup script with superuser permissions:
+      ```bash
+      sudo python3 setup.py
+      ```
+   -  The setup script will install all necessary dependencies and configure your system. This may take a few minutes.
+
+6. **Final Steps:**
+   -  Once the setup script has finished, your Raspberry Pi should be ready to interact with the Deye Hybrid Inverter. You can now access the web interface by entering the IP address of your Raspberry Pi into a web browser on any device connected to the same network.
+
+Congratulations! You've successfully set up SolarHub. You can now start monitoring your solar inverter in real-time, view historical data, and adjust settings as needed. If you encounter any issues, don't hesitate to check the project's GitHub page for troubleshooting tips or to reach out to the community for support.
 
 ...
