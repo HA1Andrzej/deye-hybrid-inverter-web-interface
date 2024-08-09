@@ -54,6 +54,7 @@ def startAP():
       config = json.load(file)
    ssid = config["wifiAP"]["ssid"]
    password = config["wifiAP"]["password"]
+   prefix = config["wifiAP"]["prefix"]
    try:
       # Stoppe den NetworkManager vor dem Start des AP
       subprocess.run("sudo systemctl stop NetworkManager", shell=True, check=True)
@@ -68,13 +69,13 @@ def startAP():
          subprocess.run("sudo iw dev wlan0 interface add uap0 type __ap", shell=True, check=True)
 
       # Konfiguriere das virtuelle Interface uap0
-      subprocess.run("sudo ifconfig uap0 192.168.4.1/24 up", shell=True, check=True)
+      subprocess.run(f"sudo ifconfig uap0 {prefix}.1/24 up", shell=True, check=True)
 
       # Konfiguriere dnsmasq
       with open("/etc/dnsmasq.conf", "w") as file:
          file.write(
             "interface=uap0\n"
-            "dhcp-range=192.168.4.2,192.168.4.20,255.255.255.0,24h\n"
+            f"dhcp-range={prefix}.2,{prefix}.20,255.255.255.0,24h\n"
          )
 
       # Konfiguriere hostapd
@@ -87,14 +88,21 @@ def startAP():
             "channel=7\n"
             "wmm_enabled=0\n"
             "macaddr_acl=0\n"
-            "auth_algs=1\n"
             "ignore_broadcast_ssid=0\n"
-            "wpa=2\n"
-            f"wpa_passphrase={password}\n"
-            "wpa_key_mgmt=WPA-PSK\n"
-            "wpa_pairwise=TKIP\n"
-            "rsn_pairwise=CCMP\n"
          )
+         if password and len(password) >= 8:
+            file.write(
+               "wpa=2\n"
+               f"wpa_passphrase={password}\n"
+               "wpa_key_mgmt=WPA-PSK\n"
+               "wpa_pairwise=TKIP\n"
+               "rsn_pairwise=CCMP\n"
+            )
+         else:
+            file.write(
+               "auth_algs=1\n"
+               "wpa=0\n"
+            )
 
       # Weise hostapd an, die Konfigurationsdatei zu verwenden
       with open("/etc/default/hostapd", "w") as file:

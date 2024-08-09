@@ -15,7 +15,7 @@ This project realizes an fully integrated web based interface for the Deye Hybri
 3. Battery charge and discharge limits to maximize its life span
 4. Mobile-friendly responsive design
 5. Automatically starts an wifi AP when it looses its wifi connection. The web interface through that AP can be used to connect the system with a new network.
-6. Automatically creates periodical backups of the database when an USB Stick is plugged into the Pi.
+6. Automatically creates periodical backups of the database when an USB Stick is plugged into the Raspberry Pi.
 7. ...
 
 # What You Need
@@ -43,8 +43,4 @@ This project realizes an fully integrated web based interface for the Deye Hybri
 4. Run the `setup.py` file using `sudo python3 deye-hybrid-inverter-web-interface/setup.py`
 5. Done
 
-Coming Soon
-
-##
-
-## Coming Soon, Work in Progress
+...

@@ -28,7 +28,8 @@
    },
    "wifiAP": {
       "ssid": "SolarHub AP",
-      "password": "12341234"
+      "password": "",
+      "prefix": "192.168.4"
    },
    "costPerKwh": 0.35,
    "earningsPerKwh": 0.08,
