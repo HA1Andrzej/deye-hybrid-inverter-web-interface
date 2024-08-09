@@ -5,13 +5,17 @@ _This is still a work in progress in a very early state. Although the software i
 # Deye Hybrid Inverter Solar Interface
 
 This project realizes an fully integrated web based interface for the Deye Hybrid Solar Inverter (6kW, 8kW, 10kw, 12kW). The System reads all of the imporant data from the inverter at a high rate and save all the data in a database. Using the responsive Web Interface you can see all of the live information, as well as historical data and interesting statistics.
-<img src="https://clippy.cc/postimg/438531128064" alt="Screenshot Web Interface on Desktop" width="400" style="border-radius: 20px; border: 2px solid rgba(130, 130, 130, 0.2)"/>
+![Screenshot of the Interface on Desktop](https://clippy.cc/postimg/684856207112)
 
 ### Features
 
-1. Automatically starts an wifi AP when it looses its wifi connection. The web interface through that AP can be used to connect the system with a new network.
-2. Automatically creates periodical backups of the database when an USB Stick is plugged into the Pi.
-3. ...
+1. Real-time monitoring of power generation and consumption
+2. Historical data visualization
+3. Battery charge and discharge limits to maximize its life span
+4. Mobile-friendly responsive design
+5. Automatically starts an wifi AP when it looses its wifi connection. The web interface through that AP can be used to connect the system with a new network.
+6. Automatically creates periodical backups of the database when an USB Stick is plugged into the Pi.
+7. ...
 
 # What You Need
 
