@@ -1,14 +1,11 @@
-import DOM from "./dom.js";
+import { getConfig } from "./com.js";
 
 // Constants
-export const constants = {
-   batteryCapacity: 14_336,
-   batteryMinSoC: 0.2,
-   batteryMaxSoC: 0.95,
-   costPerKwh: 0.35,
-   earningsPerKwh: 0.08,
-   totalSystemCost: 9_000,
-};
+export let constants = {};
+getConfig().then((res) => {
+   constants = res;
+   console.log(constants);
+});
 
 // Better mod function accounting for negative numbers correctly
 export function mod(n, m) {

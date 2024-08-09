@@ -1,6 +1,6 @@
 {
-   "name": "PVSchulz",
-   "short_name": "PVSchulz",
+   "name": "SolarHub",
+   "short_name": "SolarHub",
    "start_url": "/",
    "display": "standalone",
    "icons": [

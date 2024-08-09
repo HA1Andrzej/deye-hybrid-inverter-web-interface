@@ -5,7 +5,10 @@ import { setSafariUIColor, isDarkMode } from "./helper.js";
 
 // Variables
 const mainContainer = DOM.select("mainContainer");
-const loadingContainer = DOM.create("div#loadingContainer").append(DOM.create("img#loadingImage [src=/assets/images/sun.png]")).append(DOM.create("t#loadingText").setText("PVSchulz")).appendTo(mainContainer);
+const loadingContainer = DOM.create("div#loadingContainer")
+   .append(DOM.create("img#loadingImage [src=/assets/images/sun.png]"))
+   .append(DOM.create("t#loadingText").setText("SolarHub"))
+   .appendTo(mainContainer);
 const divider = DOM.create("div#divider");
 setTimeout(() => {
    loadingContainer.setStyle({ opacity: "0" });

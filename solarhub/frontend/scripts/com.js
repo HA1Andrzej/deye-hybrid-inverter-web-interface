@@ -1,10 +1,20 @@
 import { constants } from "./helper.js";
 
-export async function updateWifi(ssid, password) {
-   const data = { ssid: ssid, password: password };
+export async function getWifiNetworks() {
+   const res = await communicateWithServer("getWifiNetworks", JSON.stringify([]));
+   return JSON.parse(res).data;
+}
+
+export async function updateWifi(ssid, password, staticIp) {
+   const data = { ssid: ssid, password: password, staticip: staticIp };
    const res = await communicateWithServer("updateWifi", JSON.stringify(data));
    console.log(JSON.parse(res));
    return JSON.parse(res).success;
+}
+
+export async function getConfig() {
+   const res = await communicateWithServer("getConfig", JSON.stringify([]));
+   return JSON.parse(res).data;
 }
 
 export async function getLiveData() {
@@ -37,8 +47,8 @@ export async function predictBatteryRemainingTime(soc, minutes = 7) {
    const start = end - minutes * 60 * 1000;
    const data = await getRawData(start, end, end - start);
    const averagePower = -data[0].p_batt;
-   const remainingSoC = (averagePower < 0 ? constants.batteryMinSoC : constants.batteryMaxSoC) - soc / 100;
-   const remainingTime = Math.abs((constants.batteryCapacity * remainingSoC) / averagePower);
+   const remainingSoC = (averagePower < 0 ? constants.battery.dischargeLimit.soc : constants.battery.chargeLimit.soc) - soc / 100;
+   const remainingTime = Math.abs((constants.battery.capactiy * remainingSoC) / averagePower);
    const hoursRemaining = Math.floor(remainingTime);
    const minutesRemaining = Math.floor((remainingTime - hoursRemaining) * 60);
    return {

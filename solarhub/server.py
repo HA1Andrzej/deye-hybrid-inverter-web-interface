@@ -7,7 +7,7 @@ import socket
 import dbManager
 import shutil
 import threading
-import wifi
+import wifiManager
 
 # Extend HTTPServer to support threading
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -47,11 +47,21 @@ def handleRequest(httpHandler, action, data):
    if action == "dbQuery":
       res = dbManager.query(data)
 
+   if action == "getWifiNetworks":
+      networks = wifiManager.getAvailableNetworks()
+      res = json.dumps({"success": True, "data": networks})
+
    if action == "updateWifi":
       ssid = json.loads(data).get("ssid")
       password = json.loads(data).get("password")
-      res = json.dumps({"success": True, data: data})
-      wifi.connectNewNetwork(ssid, password)
+      staticIp = json.loads(data).get("staticip")
+      res = json.dumps({"success": True, "data": data})
+      wifiManager.connectNewNetwork(ssid, password, staticIp)
+
+   if action == "getConfig":
+      with open('config.json', 'r') as config_file:
+         config_data = json.load(config_file)
+      res = json.dumps({"success": True, "data": config_data})
 
    answer = {"answer": res}
    httpHandler.send_response(200)
@@ -60,11 +70,10 @@ def handleRequest(httpHandler, action, data):
 
 # -------------------------------------------
 # Start Server
-def startServer():
-   port = 80
-   httpd = ThreadingHTTPServer(('0.0.0.0', port), CustomHandler)
+def start():
+   httpd = ThreadingHTTPServer(('0.0.0.0', 80), CustomHandler)
    ip = socket.gethostbyname(socket.gethostname())
-   print(f"Server Started. You can visit the interface locally at: http://{ip}:{port}")
+   print(f"Server Started. You can visit the interface locally at: http://{ip}")
    httpd.serve_forever()
 
 # End of File

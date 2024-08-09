@@ -18,7 +18,7 @@ This project realizes an fully integrated interface for the Deye Hybrid Solar In
 ### Hardware
 
 1. Cut end of the RJ45 Cable to expose the wires. We will only need three of these wires.
-2. Connect them to the RS485 Converter.
+2. Connect them to the RS485 Converter. **GND is RJ45 Pin 6**, **A is RJ45 Pin 7** and **B is RJ45 Pin 8**.
 3. Connect the other end of the RJ45 Cable with the "Modbus"-Port of the Inverter.
 4. ...
 

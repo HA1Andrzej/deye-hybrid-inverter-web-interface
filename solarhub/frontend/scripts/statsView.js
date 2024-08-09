@@ -526,7 +526,7 @@ function processStatistics(data) {
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    const totalEnergy = batteryChargeEnergy + batteryDischargeEnergy;
-   const batteryCycles = totalEnergy / (2 * constants.batteryCapacity);
+   const batteryCycles = totalEnergy / (2 * constants.battery.capacity);
    let deltaSoc = 0;
    data.values.forEach((a, index) => {
       if (index > 0) {
@@ -534,7 +534,7 @@ function processStatistics(data) {
       }
    });
    const totalCapacity = totalEnergy / (deltaSoc / 100);
-   const stateOfHealth = (totalCapacity / constants.batteryCapacity) * 100;
+   const stateOfHealth = (totalCapacity / constants.battery.capacity) * 100;
    DOM.select("batteryChargeText").setText("+" + (batteryChargeEnergy / 1000).toThreeDecimalString());
    DOM.select("batteryDischargeText").setText("-" + (batteryDischargeEnergy / 1000).toThreeDecimalString());
    DOM.select("batteryCyclesText").setText((Math.round(batteryCycles * 100) / 100).toLocaleString("de-DE"));

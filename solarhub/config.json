@@ -1,0 +1,36 @@
+{
+   "battery": {
+      "capacity": 14336,
+      "dischargeLimit": { "soc": 0.2, "register": 109, "onCurrent": 180, "offCurrent": 0 },
+      "chargeLimit": { "soc": 0.95, "register": 108, "onCurrent": 180, "offCurrent": 0 }
+   },
+   "telegram": {
+      "enabled": true,
+      "botToken": "7338008570:AAGfAuDvdC48Nzm3q2GooS5Re292y5MHido",
+      "channelId": "-1002238032049"
+   },
+   "inverter": {
+      "name": "Deye Hybrid 48V",
+      "sources": [
+         "https://diysolarforum.com/threads/modbus-comms-with-deye-inverter.46197/",
+         "https://github.com/StephanJoubert/home_assistant_solarman/blob/main/custom_components/solarman/inverter_definitions/deye_sg04lp3.yaml"
+      ],
+      "modbusRegisters": {
+         "p_ct_external": { "address": 619, "isTwosComplement": true },
+         "batt_soc": { "address": 214, "isTwosComplement": false },
+         "p_batt": { "address": 590, "isTwosComplement": true },
+         "p_string1": { "address": 672, "isTwosComplement": false },
+         "p_string2": { "address": 673, "isTwosComplement": false },
+         "p_grid": { "address": 625, "isTwosComplement": true },
+         "p_inverter": { "address": 636, "isTwosComplement": false },
+         "p_gen": { "address": 667, "isTwosComplement": true }
+      }
+   },
+   "wifiAP": {
+      "ssid": "SolarHub AP",
+      "password": "12341234"
+   },
+   "costPerKwh": 0.35,
+   "earningsPerKwh": 0.08,
+   "totalSystemCost": 9000
+}
