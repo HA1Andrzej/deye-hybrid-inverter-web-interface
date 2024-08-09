@@ -39,15 +39,10 @@ In this section, we'll walk you through the hardware and software setup for Sola
 
 2. **Connect the Wires to the RS485 Converter:**
 
-   -  Look at the wires from the RJ45 cable and identify the ones connected to the following pins:
-      -  **Pin 6 (GND):** This wire will be the ground connection.
-      -  **Pin 7 (A):** This wire carries the positive data signal.
-      -  **Pin 8 (B):** This wire carries the negative data signal.
-   -  Connect these wires to the corresponding terminals on the RS485 converter:
-      -  **GND wire to GND terminal**
-      -  **A wire to A terminal**
-      -  **B wire to B terminal**
-   -  If you're unsure about identifying the wires or making the connections, please refer to the following RJ45 pinout guide to identify the correct cables.
+   -  Look at the wires from the RJ45 cable and identify the correct ones using the pinout guide below. Connect those to the RS485-USB converter as specified.
+      -  **Pin 6:** This wire will be the ground connection and connects to **GND** on the RS485-USB converter.
+      -  **Pin 7:** This wire carries the positive data signal and connects to **A** on the RS485-USB converter.
+      -  **Pin 8:** This wire carries the negative data signal and connects to **B** on the RS485-USB converter.
 
    ![](https://clippy.cc/postimg/803908543956)
 
