@@ -2,7 +2,7 @@
 
 _This is still a work in progress in a very early state. Although the software is functional, it is not guaranteed that it is safe to use for your system and that future updates will not break the database. This message will be removed, once everything's done and stable._
 
-# Deye Hybrid Inverter Solar Interface
+# Deye Hybrid Inverter Solar Interface: SolarHub
 
 This project realizes an fully integrated web based interface for the Deye Hybrid Solar Inverter (6kW, 8kW, 10kw, 12kW). The System reads all of the imporant data from the inverter at a high rate and save all the data in a database. Using the responsive Web Interface you can see all of the live information, as well as historical data and interesting statistics.
 
