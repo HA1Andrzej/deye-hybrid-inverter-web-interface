@@ -5,6 +5,7 @@ _This is still a work in progress in a very early state. Although the software i
 # Deye Hybrid Inverter Solar Interface
 
 This project realizes an fully integrated web based interface for the Deye Hybrid Solar Inverter (6kW, 8kW, 10kw, 12kW). The System reads all of the imporant data from the inverter at a high rate and save all the data in a database. Using the responsive Web Interface you can see all of the live information, as well as historical data and interesting statistics.
+
 ![Screenshot of the Interface on Desktop](https://clippy.cc/postimg/684856207112)
 
 ### Features
