@@ -48,7 +48,8 @@ In this section, we'll walk you through the hardware and software setup for Sola
       -  **A wire to A terminal**
       -  **B wire to B terminal**
    -  If you're unsure about identifying the wires or making the connections, please refer to the following RJ45 pinout guide to identify the correct cables.
-      ![](https://clippy.cc/postimg/803908543956)
+
+   ![](https://clippy.cc/postimg/803908543956)
 
 3. **Connect the RS485 Converter to the Inverter:**
 
