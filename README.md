@@ -26,6 +26,8 @@ This project realizes an fully integrated web based interface for the Deye Hybri
 
 # Setup
 
+![Setup Diagram](https://clippy.cc/postimg/510832930572)
+
 ### Hardware
 
 1. Cut end of the RJ45 Cable to expose the wires. We will only need three of these wires.
