@@ -44,9 +44,9 @@ def start():
 
       # Limit Battery SoC
       batt_soc = liveValueBuffer.get("batt_soc", 0)
-      maxDischargeCurrent = config["battery"]["dischargeLimit"]["offCurrent"] if batt_soc <= config["battery"]["dischargeLimit"]["soc"] else config["battery"]["dischargeLimit"]["onCurrent"]
+      maxDischargeCurrent = config["battery"]["dischargeLimit"]["offCurrent"] if batt_soc <= 100*config["battery"]["dischargeLimit"]["soc"] else config["battery"]["dischargeLimit"]["onCurrent"]
       writeRegister(config["battery"]["dischargeLimit"]["register"], maxDischargeCurrent)
-      maxChargeCurrent = config["battery"]["chargeLimit"]["offCurrent"] if batt_soc >= config["battery"]["chargeLimit"]["soc"] else config["battery"]["chargeLimit"]["onCurrent"]
+      maxChargeCurrent = config["battery"]["chargeLimit"]["offCurrent"] if batt_soc >= 100*config["battery"]["chargeLimit"]["soc"] else config["battery"]["chargeLimit"]["onCurrent"]
       writeRegister(config["battery"]["chargeLimit"]["register"], maxChargeCurrent)
 
       # Save all changes and wait
@@ -87,8 +87,8 @@ def readLiveValues(buffer):
 notifications = {}
 def checkAndWarn(buffer):
    batt_soc = buffer.get("batt_soc", 0)
-   chargeSocLimit = config["battery"]["chargeLimit"]["soc"]
-   dischargeSocLimit = config["battery"]["dischargeLimit"]["soc"]
+   chargeSocLimit = 100*config["battery"]["chargeLimit"]["soc"]
+   dischargeSocLimit = 100*config["battery"]["dischargeLimit"]["soc"]
    for threshold in [dischargeSocLimit+10, dischargeSocLimit+1]:
       if batt_soc <= threshold and not (notifications.get(f"battery{threshold}") or False):
          notifications[f"battery{threshold}"] = True

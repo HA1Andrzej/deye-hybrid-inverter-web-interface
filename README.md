@@ -49,7 +49,7 @@ In this section, we'll walk you through the hardware and software setup for Sola
 3. **Connect the RS485 Converter to the Inverter:**
 
    -  Once the wires are connected to the RS485 converter, plug the other end of the RJ45 cable into the "Modbus" port on the Deye Inverter.
-   -  The RS485 converter will likely connect to your Raspberry Pi via USB.
+   -  The RS485 converter will connect to your Raspberry Pi via USB.
 
 4. **Power On and Verify Connections:**
    -  Power on your Raspberry Pi and ensure that all connections are secure. If everything is connected correctly, the hardware setup is complete.
