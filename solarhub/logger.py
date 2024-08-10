@@ -5,11 +5,12 @@ from telegram import sendTelegramMessage
 import os
 import dbManager
 import json
+import glob
 
 def start():
    global cursor, conn, config, batteryLimits
    cursor, conn = dbManager.connect("database.db")
-   connectToUsbAdapter("/dev/ttyUSB0")
+   connectToSerialUsbAdapter()
 
    # Reads data from config.json
    with open('config.json', 'r') as file:
@@ -44,9 +45,9 @@ def start():
 
       # Limit Battery SoC
       batt_soc = liveValueBuffer.get("batt_soc", 0)
-      maxDischargeCurrent = config["battery"]["dischargeLimit"]["offCurrent"] if batt_soc <= 100*config["battery"]["dischargeLimit"]["soc"] else config["battery"]["dischargeLimit"]["onCurrent"]
+      maxDischargeCurrent = 0 if batt_soc <= 100*config["battery"]["dischargeLimit"]["soc"] else config["battery"]["dischargeLimit"]["maxCurrent"]
       writeRegister(config["battery"]["dischargeLimit"]["register"], maxDischargeCurrent)
-      maxChargeCurrent = config["battery"]["chargeLimit"]["offCurrent"] if batt_soc >= 100*config["battery"]["chargeLimit"]["soc"] else config["battery"]["chargeLimit"]["onCurrent"]
+      maxChargeCurrent = 0 if batt_soc >= 100*config["battery"]["chargeLimit"]["soc"] else config["battery"]["chargeLimit"]["maxCurrent"]
       writeRegister(config["battery"]["chargeLimit"]["register"], maxChargeCurrent)
 
       # Save all changes and wait
@@ -54,8 +55,11 @@ def start():
       time.sleep(0.7)
 
 # Connect to RS485-Adapter
-def connectToUsbAdapter(port):
+def connectToSerialUsbAdapter():
    global client
+   devices = glob.glob('/dev/ttyUSB*')
+   if not devices: return False
+   port = devices[0]
    client = ModbusSerialClient(method="rtu", port=port, baudrate=9600, timeout=1)
    while True:
       try:
