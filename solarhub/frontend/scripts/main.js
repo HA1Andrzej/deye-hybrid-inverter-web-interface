@@ -42,7 +42,8 @@ function setDisplayMode(mode) {
          borderRadius: "",
          width: "",
       });
-      setSafariUIColor(isDarkMode() ? "black" : "var(--themeColor)");
+      // setSafariUIColor(isDarkMode() ? "black" : "var(--themeColor)");
+      setSafariUIColor("var(--themeColor)");
    }
 
    if (mode == 1) {
