@@ -26,12 +26,12 @@
 :root {
    --borderRadius: 13px;
    --textColor: rgb(0, 20, 40);
-   --themeColor: rgb(255, 255, 255);
+   --themeColor: rgb(245, 250, 255);
    --invertValue: 0;
 
    @media (prefers-color-scheme: dark) {
       --textColor: rgba(225, 230, 235, 1);
-      --themeColor: rgba(0, 0, 0, 1);
+      --themeColor: rgba(20, 30, 40, 1);
       --invertValue: 1;
    }
 }
