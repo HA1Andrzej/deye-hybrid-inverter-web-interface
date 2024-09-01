@@ -226,7 +226,7 @@ function buildBatteryHealthContainer() {
 function buildKmBars() {
    const barContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
    barContainer.append(buildBigTitle("gears.png", "Effizienz der Mobilität", "Die produzierte Menge an Energie würde reichen für..."));
-   for (let i = 0; i < 19; i++) {
+   for (let i = 0; i < 20; i++) {
       const bar = new StateBar();
       bar.setColor({ r: 238, g: 66, b: 102 });
       bar.setColor({ r: 255, g: 80, b: 122 });
@@ -483,9 +483,10 @@ function processStatistics(data) {
       { name: "Verbrenner-Bus", value: (data.sunEnergy / 8_600) * 100, icon: "bus.png" },
       { name: "E-Motorrad", value: (data.sunEnergy / 8_000) * 100, icon: "motorcycle.png", hidden: true },
       { name: "E-Segelflugzeug", value: (data.sunEnergy / 6_150) * 100, icon: "jet.png", hidden: true },
-      { name: "E-Bus", value: (data.sunEnergy / 2_800) * 100, icon: "bus.png", hidden: true },
+      { name: "E-Bus", value: (data.sunEnergy / 4_000) * 100, icon: "bus.png", hidden: true },
       { name: "Zu Fuß", value: (data.sunEnergy / 2_600) * 100, icon: "pedestrian.png" },
-      { name: "Zug", value: (data.sunEnergy / 2_000) * 100, icon: "train.png" },
+      { name: "Zug", value: (data.sunEnergy / 2_500) * 100, icon: "train.png" },
+      { name: "Urbane Seilbahn", value: (data.sunEnergy / 2_000) * 100, icon: "cablecar.png", hidden: true },
       { name: "Lastenrad", value: (data.sunEnergy / 1_400) * 100, icon: "cargobike.png", hidden: true },
       { name: "E-Scooter", value: (data.sunEnergy / 1_350) * 100, icon: "e_scooter.png" },
       { name: "E-Bike", value: (data.sunEnergy / 850) * 100, icon: "bike.png" },
