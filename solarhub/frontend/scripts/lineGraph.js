@@ -1,4 +1,5 @@
 import DOM from "./dom.js";
+import { isDarkMode } from "./helper.js";
 
 export default class LineGraph {
    constructor() {
@@ -126,7 +127,8 @@ export default class LineGraph {
          if (this.mouseX !== undefined) {
             ctx.beginPath();
             ctx.lineWidth = "3";
-            ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue("--textColor");
+            ctx.strokeStyle = textColor.trim();
             ctx.moveTo(this.mouseX, 0);
             ctx.lineTo(this.mouseX, height);
             ctx.stroke();

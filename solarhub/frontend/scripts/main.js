@@ -1,7 +1,7 @@
 import DOM from "./dom.js";
 import * as LiveView from "./liveView.js";
 import * as StatsView from "./statsView.js";
-import { setSafariUIColor, isDarkMode, mod } from "./helper.js";
+import { setSafariUIColor, mod } from "./helper.js";
 
 // Variables
 const mainContainer = DOM.select("mainContainer");
@@ -42,7 +42,6 @@ function setDisplayMode(mode) {
          borderRadius: "",
          width: "",
       });
-      // setSafariUIColor(isDarkMode() ? "black" : "var(--themeColor)");
       setSafariUIColor("var(--themeColor)");
    }
 
