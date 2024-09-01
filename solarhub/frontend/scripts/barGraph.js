@@ -15,15 +15,27 @@ export default class BarGraph {
    draw() {
       this.elements.sort((a, b) => a.data.start - b.data.start);
       this.container.setContent("");
+      const containerHeight = 225;
       const maxVal = Math.max(...this.elements.map((elem) => Math.max(elem.a, elem.b)));
-      const scalingFactor = 225 / maxVal;
+      const scalingFactor = containerHeight / maxVal / 2;
       for (let i = 0; i < this.elements.length; i++) {
          const elem = this.elements[i];
-         const elementContainer = DOM.create("div.barGraphElementContainer");
-         const barContainer = DOM.create("div.barGraphBarContainer").appendTo(elementContainer);
-         const bar1 = DOM.create("div.barGraphBar1").appendTo(barContainer);
-         const bar2 = DOM.create("div.barGraphBar2").appendTo(barContainer);
-         DOM.create("t.barGraphBarDescriptionText").setText(elem.label).appendTo(elementContainer);
+         const elementContainer = DOM.create("div.elementContainer");
+         const bar1Height = Math.max(elem.a * scalingFactor, 7);
+         const bar2Height = Math.max(elem.b * scalingFactor, 7);
+         const offset = containerHeight / 2 - bar1Height;
+         DOM.create("div.bar.upper")
+            .setStyle({
+               height: bar1Height + "px",
+               marginTop: offset + "px",
+            })
+            .appendTo(elementContainer);
+         DOM.create("t.label").setText(elem.label).appendTo(elementContainer);
+         DOM.create("div.bar.lower")
+            .setStyle({
+               height: bar2Height + "px",
+            })
+            .appendTo(elementContainer);
          let selectedIndex = this.selectedIndex;
          if (!selectedIndex || selectedIndex >= this.elements.length) selectedIndex = this.elements.length - 1;
          const isSelected = i == selectedIndex;
@@ -36,13 +48,6 @@ export default class BarGraph {
             this.elementClicked(elem.data);
          }, isSelected);
          this.container.append(elementContainer);
-
-         bar1.setStyle({
-            height: elem.a * scalingFactor + "px",
-         });
-         bar2.setStyle({
-            height: elem.b * scalingFactor + "px",
-         });
       }
    }
 }
@@ -60,81 +65,67 @@ style.innerHTML = `
       justify-content: center;
    }
 
-   .barGraphElementContainer {
+   .barGraphContainer .elementContainer {
       flex-grow: 1;
       width: 5px;
       max-width: 25px;
       height: 100%;
-      margin: 0px 3px;
+      padding: 0px 4px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: flex-start;
       align-items: center;
       transition: 0.3s;
    }
 
-   .barGraphBarContainer {
+   .barGraphContainer .bar {
       width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: flex-end;
-      gap: 2px;
+      border-radius: 50px;
+      transition: 0.3s;
    }
 
-   .barGraphBar1 {
-      flex-grow: 1;
+   .barGraphContainer .bar.upper {
       background-color: rgba(255, 199, 0, 1);
-      border-radius: 50px;
-      min-height: 7px;
-      transition: 0.3s;
    }
 
-   .barGraphBar2 {
-      flex-grow: 1;
+   .barGraphContainer .bar.lower {
       background-color: rgba(96, 183, 255, 1);
-      border-radius: 50px;
-      min-height: 7px;
-      transition: 0.3s;
    }
 
-   .barGraphBarDescriptionText {
+   .barGraphContainer .label {
       font-family: boldest;
       font-size: 12px;
       opacity: 0.26;
       width: 100%;
-      margin-top: 5px;
+      margin: 4px 0px;
       text-align: center;
       white-space: nowrap;
       transition: 0.3s;
    }
 
    @media (pointer: fine) {
-      .barGraphElementContainer:hover {
+      .barGraphContainer .elementContainer:hover {
          transform: scale(1.05);
       }
 
-      .barGraphElementContainer:hover .barGraphBarDescriptionText {
+      .barGraphContainer .elementContainer:hover .label {
          opacity: 1;
          transform: scale(1.3);
       }
 
-      .barGraphElementContainer:hover .barGraphBar1 {
-         box-shadow: inset 0px 0px 0px 30px rgba(255, 255, 255, 0.7);
+      .barGraphContainer .elementContainer:hover .bar.upper,
+      .barGraphContainer .elementContainer:hover .bar.lower {
+          box-shadow: inset 0px 0px 0px 30px rgba(255, 255, 255, 0.7);
       }
 
-      .barGraphElementContainer:hover .barGraphBar2 {
-         box-shadow: inset 0px 0px 0px 30px rgba(255, 255, 255, 0.7);
-      }
 
-      .barGraphElementContainer:active {
+      .barGraphContainer .elementContainer:active {
          transform: scale(1.02);
          opacity: 0.5;
       }
    }
 
-   .barGraphElementContainer.selected .barGraphBarDescriptionText {
+   .barGraphContainer .elementContainer.selected .label {
       opacity: 1;
       transform: scale(1.6);
    }

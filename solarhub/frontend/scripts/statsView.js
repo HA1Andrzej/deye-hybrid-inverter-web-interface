@@ -252,7 +252,7 @@ async function tabClicked(tabId, greyOut = true) {
    const now = new Date();
 
    // Calculate data for different time span options
-   let numberOfBars = Math.floor(statsContainer.getWidth() / 30);
+   let numberOfBars = Math.floor(statsContainer.getWidth() / 25);
    if (tabId == "total") numberOfBars = 1;
    let doneCounter = 0;
    for (let i = 0; i < numberOfBars; i++) {

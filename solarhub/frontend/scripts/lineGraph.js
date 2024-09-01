@@ -5,7 +5,7 @@ export default class LineGraph {
       this.elements = [];
       this.container = DOM.create("div.lineGraphContainer");
       this.subTitleText = DOM.create("t.subTitle").setStyle({ marginBottom: "0px" }).appendTo(this.container);
-      this.titleText = DOM.create("t.bigTitle").setStyle({ marginBottom: "0px" }).setText("Daten werden geladen...").appendTo(this.container);
+      this.titleText = DOM.create("t.bigTitle").setText("Daten werden geladen...").appendTo(this.container);
       this.canvas = DOM.create("canvas.lineGraphCanvas").appendTo(this.container);
       this.tickLineContainer = DOM.create("div.lineGraphTickLineContainer").appendTo(this.container);
       this.labelContainer = DOM.create("div.lineGraphLabelContainer").appendTo(this.container);
