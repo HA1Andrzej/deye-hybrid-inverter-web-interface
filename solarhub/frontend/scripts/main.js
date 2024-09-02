@@ -42,7 +42,8 @@ function setDisplayMode(mode) {
          borderRadius: "",
          width: "",
       });
-      setSafariUIColor("var(--themeColor)");
+      const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--themeColor").trim();
+      setSafariUIColor(themeColor);
    }
 
    if (mode == 1) {
