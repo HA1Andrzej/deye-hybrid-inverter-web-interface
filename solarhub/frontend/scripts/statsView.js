@@ -26,6 +26,7 @@ export function build(mainContainer) {
    DOM.create("div")
       .setStyle({ maxWidth: "550px" })
       .append(
+         buildInfoElements(),
          buildGridRatioBar(),
          buildFinancesContainer(),
          buildPieChartContainer(),
@@ -62,17 +63,38 @@ function buildTabs() {
    return tabContainer;
 }
 
+function buildInfoElements() {
+   const container = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", marginTop: "40px" });
+   DOM.create("div")
+      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center" })
+      .appendTo(container)
+      .append(
+         buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"),
+         DOM.create("div").setStyle({ width: "20px" }),
+         buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"),
+      );
+   DOM.create("div")
+      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center" })
+      .appendTo(container)
+      .append(
+         buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"),
+         DOM.create("div").setStyle({ width: "20px" }),
+         buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"),
+      );
+   return container;
+}
+
 // Builds the Grid Ratio Bar UI
 function buildGridRatioBar() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
-   container.append(buildBigTitle("gridIn.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
+   container.append(buildBigTitle("grid_in.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
    const ratioContainer = DOM.create("div#ratioContainer").appendTo(container);
    const valuesContainer = DOM.create("div#ratioValuesContainer").appendTo(ratioContainer);
-   DOM.create("img.icon [src=/assets/images/gridIn.png]").appendTo(valuesContainer);
+   DOM.create("img.icon [src=/assets/images/grid_in.png]").appendTo(valuesContainer);
    DOM.create("t.value#gridSoldValue").setText("0,000").appendTo(valuesContainer);
    DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(valuesContainer);
-   DOM.create("img.icon [src=/assets/images/gridOut.png]").appendTo(valuesContainer);
+   DOM.create("img.icon [src=/assets/images/grid_out.png]").appendTo(valuesContainer);
    DOM.create("t.value#gridBoughtValue").setText("0,000").appendTo(valuesContainer);
    DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
    const barContainer = DOM.create("div#ratioBarContainer").appendTo(ratioContainer);
@@ -112,7 +134,7 @@ function buildFinancesContainer() {
             .append(costBoxWithoutPv),
       )
       .appendTo(financesInnerContainer);
-   DOM.create("img [src=/assets/images/financesSumArrow.png]").setStyle({ width: "80px", height: "80px", objectFit: "contain" }).appendTo(financesInnerContainer);
+   DOM.create("img [src=/assets/images/finances_sum_arrow.png]").setStyle({ width: "80px", height: "80px", objectFit: "contain" }).appendTo(financesInnerContainer);
    const costBoxSaved = DOM.create("div.costBoxGreen").append(DOM.create("t.costBoxValue#costSavedValue"));
    DOM.create("div.financesElementContainer")
       .append(DOM.create("t.financesText").setText("Gespart"))
@@ -353,7 +375,7 @@ barGraph.elementClicked = (data) => {
    processStatistics(data);
 
    lineGraph.values = [];
-   lineGraph.setEnergyValues(data.sunEnergy, data.loadEnergy);
+   //lineGraph.setEnergyValues(data.sunEnergy, data.loadEnergy);
    const numberOfBlocks = Math.round((data.end - data.start) / data.blockLength);
    let prevEnd = 0;
    for (let i = 0; i < numberOfBlocks; i++) {
@@ -388,6 +410,22 @@ barGraph.elementClicked = (data) => {
 function processStatistics(data) {
    const debugText = DOM.select("debugText");
    debugText.setContent("");
+
+   // Ertrag / Verbrauch
+   DOM.select("sunEnergy").setText((data.sunEnergy / 1000).toThreeDecimalString());
+   DOM.select("loadEnergy").setText((data.loadEnergy / 1000).toThreeDecimalString());
+
+   // Peak Values
+   DOM.select("maxSunPower").setText("0,000");
+   getPeakValues("p_sun", data.start, data.end).then((maxSunPower) => {
+      const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+      DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toThreeDecimalString());
+   });
+   DOM.select("maxLoadPower").setText("0,000");
+   getPeakValues("p_load", data.start, data.end).then((maxLoadPower) => {
+      const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+      DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toThreeDecimalString());
+   });
 
    // Grid Bar
    const gridBoughtEnergy =
@@ -555,21 +593,4 @@ function processStatistics(data) {
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    debugText.appendText(`\n${(lossesEnergy / 1000).toThreeDecimalString()} kWh Verluste (Eigenverbrauch WR, Effizienz)`);
-
-   let maxSunPower, maxLoadPower;
-   getPeakValues("p_sun", data.start, data.end).then((res) => {
-      maxSunPower = res;
-   });
-   getPeakValues("p_load", data.start, data.end).then((res) => {
-      maxLoadPower = res;
-   });
-   const interval = setInterval(() => {
-      if (maxSunPower != undefined && maxLoadPower != undefined) {
-         clearInterval(interval);
-         const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-         const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-         debugText.appendText(`\nMax PV: ${Math.round(maxSunPower.val)} Watt (${maxSunDate})`);
-         debugText.appendText(`\nMax Load: ${Math.round(maxLoadPower.val)} Watt (${maxLoadDate})`);
-      }
-   }, 20);
 }

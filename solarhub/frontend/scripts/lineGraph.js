@@ -10,15 +10,6 @@ export default class LineGraph {
       this.tickLineContainer = DOM.create("div.lineGraphTickLineContainer").appendTo(this.container);
       this.labelContainer = DOM.create("div.lineGraphLabelContainer").appendTo(this.container);
 
-      const sumContainer = DOM.create("div#sumContainer").appendTo(this.container);
-      DOM.create("img.icon [src=/assets/images/sun.png]").appendTo(sumContainer);
-      this.sunEnergyValueText = DOM.create("t.value").appendTo(sumContainer);
-      this.sunEnergyUnitText = DOM.create("t.unit").appendTo(sumContainer);
-      DOM.create("div").setStyle({ width: "20px" }).appendTo(sumContainer);
-      DOM.create("img.icon [src=/assets/images/house.png]").appendTo(sumContainer);
-      this.houseEnergyValueText = DOM.create("t.value").appendTo(sumContainer);
-      this.houseEnergyUnitText = DOM.create("t.unit").appendTo(sumContainer);
-
       // Graph Hovering
       this.mouseX = undefined;
       const canvas = this.canvas.getFirstElement();
@@ -72,10 +63,6 @@ export default class LineGraph {
          DOM.create("t.lineGraphTickLine").appendTo(this.tickLineContainer);
       }
    }
-   setEnergyValues(sunEnergy, houseEnergy) {
-      this.sunEnergy = sunEnergy;
-      this.houseEnergy = houseEnergy;
-   }
    draw() {
       const canvas = this.canvas.getFirstElement();
       let height = canvas.clientHeight;
@@ -119,7 +106,6 @@ export default class LineGraph {
             const y = height - currentValue * scalingFactor;
 
             if (startNewPath) {
-               console.log("START PATHHHH", prevValue, fallbackMode, prevFallbackMode);
                ctx.beginPath();
                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${fallbackMode ? color.a / 4 : color.a / 2.5}`);
@@ -131,7 +117,6 @@ export default class LineGraph {
                return;
             }
             if (endPath) {
-               console.log("END PATHHHH");
                ctx.lineTo(x, y);
                ctx.stroke();
                ctx.lineTo(x, height);
@@ -158,16 +143,16 @@ export default class LineGraph {
 
             const index = Math.round(this.mouseX / step);
             const elem = this.values[index];
-            const val = Math.max(Math.round(elem[key] || 0), 0);
-            if (key == "a") this.sunEnergyValueText.setText(val);
-            if (key == "b") this.houseEnergyValueText.setText(val);
-            this.sunEnergyUnitText.setText("Watt");
-            this.houseEnergyUnitText.setText("Watt");
+            // const val = Math.max(Math.round(elem[key] || 0), 0);
+            // if (key == "a") this.sunEnergyValueText.setText(val);
+            // if (key == "b") this.houseEnergyValueText.setText(val);
+            // this.sunEnergyUnitText.setText("Watt");
+            // this.houseEnergyUnitText.setText("Watt");
          } else {
-            this.sunEnergyValueText.setText((this.sunEnergy / 1000).toThreeDecimalString());
-            this.sunEnergyUnitText.setText("kWh");
-            this.houseEnergyValueText.setText((this.houseEnergy / 1000).toThreeDecimalString());
-            this.houseEnergyUnitText.setText("kWh");
+            // this.sunEnergyValueText.setText((this.sunEnergy / 1000).toThreeDecimalString());
+            // this.sunEnergyUnitText.setText("kWh");
+            // this.houseEnergyValueText.setText((this.houseEnergy / 1000).toThreeDecimalString());
+            // this.houseEnergyUnitText.setText("kWh");
          }
       };
 

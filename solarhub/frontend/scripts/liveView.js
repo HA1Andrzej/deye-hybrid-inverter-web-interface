@@ -79,11 +79,11 @@ function updateLiveData() {
       }
       gridPowerBar.setValue(Math.abs(data.p_grid));
       if (data.p_grid <= 0) {
-         gridPowerBar.setIcon("gridIn.png");
+         gridPowerBar.setIcon("grid_in.png");
          gridPowerBar.setColor({ r: 0, g: 176, b: 155 });
          gridPowerBar.setInfoText(`+${constants.earningsPerKwh.toString().replace(".", ",")} € / kWh`);
       } else {
-         gridPowerBar.setIcon("gridOut.png");
+         gridPowerBar.setIcon("grid_out.png");
          gridPowerBar.setColor({ r: 255, g: 44, b: 133 });
          gridPowerBar.setInfoText(`-${constants.costPerKwh.toString().replace(".", ",")} € / kWh`);
       }
