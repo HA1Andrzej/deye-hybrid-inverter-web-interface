@@ -18,11 +18,6 @@
    src: url("/assets/fonts/chewy.ttf");
 }
 
-@font-face {
-   font-family: "luckiestguy";
-   src: url("/assets/fonts/luckiestguy.ttf");
-}
-
 :root {
    --borderRadius: 13px;
    --textColor: rgb(0, 20, 40);
