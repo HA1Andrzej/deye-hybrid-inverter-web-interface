@@ -91,21 +91,21 @@ function buildGridRatioBar() {
    const ratioContainer = DOM.create("div#ratioContainer").appendTo(container);
    const valuesContainer = DOM.create("div#ratioValuesContainer").appendTo(ratioContainer);
    DOM.create("img.icon [src=/assets/images/grid_in.png]").appendTo(valuesContainer);
-   DOM.create("t.value#gridSoldValue").setText("0,000").appendTo(valuesContainer);
+   DOM.create("t.value#gridSoldValue").appendTo(valuesContainer);
    DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(valuesContainer);
    DOM.create("img.icon [src=/assets/images/grid_out.png]").appendTo(valuesContainer);
-   DOM.create("t.value#gridBoughtValue").setText("0,000").appendTo(valuesContainer);
+   DOM.create("t.value#gridBoughtValue").appendTo(valuesContainer);
    DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
    const barContainer = DOM.create("div#ratioBarContainer").appendTo(ratioContainer);
    DOM.create("div.ratioBar#ratioBarGreen").appendTo(barContainer);
    DOM.create("div.ratioBar#ratioBarRed").appendTo(barContainer);
    const costContainer = DOM.create("div#ratioCostContainer").appendTo(ratioContainer);
    const costBoxIn = DOM.create("div.costBoxGreen").appendTo(costContainer);
-   DOM.create("t.costBoxValue#gridSoldCostValue").setText("+0,00 €").appendTo(costBoxIn);
+   DOM.create("t.costBoxValue#gridSoldCostValue").appendTo(costBoxIn);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(costContainer);
    const costBoxOut = DOM.create("div.costBoxRed").appendTo(costContainer);
-   DOM.create("t.costBoxValue#gridBoughtCostValue").setText("-0,00 €").appendTo(costBoxOut);
+   DOM.create("t.costBoxValue#gridBoughtCostValue").appendTo(costBoxOut);
    return container;
 }
 
@@ -414,20 +414,16 @@ function processStatistics(data) {
    debugText.setContent("");
 
    // Ertrag / Verbrauch
-   const sunEnergyKwh = data.sunEnergy / 1000;
-   const sunEnergyString = sunEnergyKwh < 50 ? sunEnergyKwh.toTwoDecimalString() : Math.round(sunEnergyKwh);
-   DOM.select("sunEnergy").setText(sunEnergyString);
-   const loadEnergyKwh = data.loadEnergy / 1000;
-   const loadEnergyString = loadEnergyKwh < 50 ? loadEnergyKwh.toTwoDecimalString() : Math.round(loadEnergyKwh);
-   DOM.select("loadEnergy").setText(loadEnergyString);
+   DOM.select("sunEnergy").setText((data.sunEnergy / 1000).toTwoDecimalString(50));
+   DOM.select("loadEnergy").setText((data.loadEnergy / 1000).toTwoDecimalString(50));
 
    // Peak Values
-   DOM.select("maxSunPower").setText("0,000");
+   DOM.select("maxSunPower").setText("0,00");
    getPeakValues("p_sun", data.start, data.end).then((maxSunPower) => {
       const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
       DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toTwoDecimalString());
    });
-   DOM.select("maxLoadPower").setText("0,000");
+   DOM.select("maxLoadPower").setText("0,00");
    getPeakValues("p_load", data.start, data.end).then((maxLoadPower) => {
       const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
       DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toTwoDecimalString());
@@ -450,8 +446,8 @@ function processStatistics(data) {
    const gridSoldCost = (gridSoldEnergy / 1000) * constants.earningsPerKwh;
    DOM.select("gridSoldCostValue").setText("+" + gridSoldCost.toEuroString());
    DOM.select("gridBoughtCostValue").setText("-" + gridBoughtCost.toEuroString());
-   DOM.select("gridSoldValue").setText((gridSoldEnergy / 1000).toThreeDecimalString());
-   DOM.select("gridBoughtValue").setText((gridBoughtEnergy / 1000).toThreeDecimalString());
+   DOM.select("gridSoldValue").setText((gridSoldEnergy / 1000).toTwoDecimalString(50));
+   DOM.select("gridBoughtValue").setText((gridBoughtEnergy / 1000).toTwoDecimalString(50));
    DOM.select("ratioBarGreen").setStyle({ width: `${Math.round((gridSoldEnergy / (gridBoughtEnergy + gridSoldEnergy)) * 100)}%` });
 
    // Finances
@@ -507,11 +503,11 @@ function processStatistics(data) {
    const gramsCo2perTreePerYear = 13_000;
    const timeFrameYears = (Math.max(...data.values.map((value) => value.timestamp_end)) - Math.min(...data.values.map((value) => value.timestamp_start))) / (1000 * 60 * 60 * 24 * 365.25);
    const numberOfTrees = Math.round(savedCo2 / timeFrameYears / gramsCo2perTreePerYear);
-   DOM.select("co2WeightText").setText((Math.round(savedCo2 / 10) / 100).toLocaleString("de-DE"));
+   DOM.select("co2WeightText").setText((savedCo2 / 1000).toTwoDecimalString(50));
    DOM.select("co2BalloonsText").setText(co2ToBalloons.toLocaleString("de-DE"));
    DOM.select("co2CarKmText").setText(co2ToCar);
    DOM.select("co2TreesText").setText(numberOfTrees);
-   DOM.select("co2CoalText").setText((Math.round(gramsOfSavedCoal / 10) / 100).toLocaleString("de-DE"));
+   DOM.select("co2CoalText").setText((gramsOfSavedCoal / 1000).toTwoDecimalString(50));
 
    // Autarkiegrad & Eigenverbrauch
    const selfSufficiency = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / data.loadEnergy);
@@ -547,7 +543,8 @@ function processStatistics(data) {
       const max = Math.max(...ranges.map((item) => (item.hidden && !kmBarsIgnoreHidden ? 0 : item.value)));
       kmBars.forEach((bar) => bar.setMax(max));
       Object.values(ranges).forEach((data, index) => {
-         kmBars[index].setValue(data.value, true);
+         kmBars[index].setValue(data.value);
+         kmBars[index].setValueText(Math.round(data.value));
          kmBars[index].setInfoText(data.name);
          kmBars[index].setIcon(data.icon);
          const isHidden = data.hidden && !kmBarsIgnoreHidden;
@@ -586,11 +583,11 @@ function processStatistics(data) {
    const stateOfHealth = (totalCapacity / constants.battery.capacity) * 100;
    const maxSoc = Math.max(...data.values.map((a) => a.batt_soc));
    const minSoc = Math.min(...data.values.map((a) => a.batt_soc));
-   const avgSoc = Math.round(data.values.reduce((acc, a) => acc + a.batt_soc, 0) / data.values.length);
+   const avgSoc = data.values.reduce((acc, a) => acc + a.batt_soc, 0) / data.values.length;
 
-   DOM.select("batteryChargeText").setText((batteryChargeEnergy / 1000).toThreeDecimalString());
-   DOM.select("batteryDischargeText").setText((batteryDischargeEnergy / 1000).toThreeDecimalString());
-   DOM.select("batteryCyclesText").setText((Math.round(batteryCycles * 100) / 100).toLocaleString("de-DE"));
+   DOM.select("batteryChargeText").setText((batteryChargeEnergy / 1000).toTwoDecimalString(50));
+   DOM.select("batteryDischargeText").setText((batteryDischargeEnergy / 1000).toTwoDecimalString(50));
+   DOM.select("batteryCyclesText").setText(batteryCycles.toTwoDecimalString(10));
    DOM.select("batterySoHText").setText(Math.round(stateOfHealth));
    DOM.select("maxBatterySoCText").setText(Math.round(maxSoc));
    DOM.select("minBatterySoCText").setText(Math.round(minSoc));
@@ -605,5 +602,5 @@ function processStatistics(data) {
          const power = a.p_losses;
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
-   debugText.appendText(`\n${(lossesEnergy / 1000).toThreeDecimalString()} kWh Verluste (Eigenverbrauch WR, Effizienz)`);
+   debugText.appendText(`\n${(lossesEnergy / 1000).toTwoDecimalString(50)} kWh Verluste (Eigenverbrauch WR, Effizienz)`);
 }

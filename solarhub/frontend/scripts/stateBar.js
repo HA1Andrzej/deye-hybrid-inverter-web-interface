@@ -62,7 +62,7 @@ export default class StateBar {
    getMax() {
       return this.maxValue;
    }
-   setValue(val, round) {
+   setValue(val) {
       const ratio = Math.min((val / this.maxValue) * 100, 100);
       this.barInner.setStyle({
          width: ratio + "%",
@@ -72,8 +72,10 @@ export default class StateBar {
             marginLeft: `calc(${ratio * 0.95}% - 12.5px)`,
          });
       }
-      if (round) val = Math.round(val);
-      this.value.setText((Math.round(val * 1000) / 1000).toLocaleString("de-DE"));
+      this.setValueText((Math.round(val * 1000) / 1000).toLocaleString("de-DE"));
+   }
+   setValueText(text) {
+      this.value.setText(text);
    }
 }
 

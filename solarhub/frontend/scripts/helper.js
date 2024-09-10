@@ -50,7 +50,10 @@ Number.prototype.toThreeDecimalString = function () {
 };
 
 // Formats a Number to a String (726,4 -> "726,40")
-Number.prototype.toTwoDecimalString = function () {
+Number.prototype.toTwoDecimalString = function (decimalCutoffThreshold) {
+   if (decimalCutoffThreshold && this >= decimalCutoffThreshold) {
+      return Math.round(this).toLocaleString("de-DE");
+   }
    let res = (Math.round(this * 100) / 100).toString();
    if (!res.includes(".")) {
       res += ",00";
