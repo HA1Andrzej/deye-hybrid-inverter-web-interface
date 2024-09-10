@@ -224,23 +224,25 @@ function buildBigTitle(icon, subtitle, title) {
 // Build UI für Battery Health
 function buildBatteryHealthContainer() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: "100px" });
-   container.append(buildBigTitle("battery.png", "Batteriegesundheit", "So sehr wurde die Batterie belastet"));
-   const hContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }).appendTo(container);
+   container.append(buildBigTitle("battery.png", "Batteriegesundheit", "So stark wurde die Batterie beansprucht"));
+   const hContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", margin: "30px 0px" }).appendTo(container);
    hContainer.append(
-      DOM.create("div")
-         .setStyle({ marginRight: "30px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" })
-         .append(DOM.create("img.batteryArrowImage [src=/assets/images/arrow_in.png]"))
-         .append(DOM.create("t.value#batteryChargeText").setText("+0,000"), DOM.create("t.unit").setText("kWh")),
+      DOM.create("div").setStyle({ display: "flex", flexDirection: "column", alignItems: "flex-end" }).append(DOM.create("t.value#batteryChargeText"), DOM.create("t.unit").setText("kWh geladen")),
+      DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginRight: "20px" }),
    );
-   hContainer.append(DOM.create("img [src=/assets/images/battery_large.png]").setStyle({ width: "60px", height: "90px", objectFit: "contain" }));
+   hContainer.append(DOM.create("img [src=/assets/images/battery_large.png]").setStyle({ width: "60px", objectFit: "contain", marginTop: "-20px" }));
    hContainer.append(
-      DOM.create("div")
-         .setStyle({ marginLeft: "30px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" })
-         .append(DOM.create("img.batteryArrowImage [src=/assets/images/arrow_in.png]"))
-         .append(DOM.create("t.value#batteryDischargeText").setText("-0,000"), DOM.create("t.unit").setText("kWh")),
+      DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginLeft: "20px" }),
+      DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).append(DOM.create("t.value#batteryDischargeText"), DOM.create("t.unit").setText("kWh entladen")),
    );
    const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", marginTop: "30px" }).appendTo(container);
-   elemContainer.append(buildSimpleIconTextElement("cycle.png", "batteryCyclesText", "Zyklen"), buildSimpleIconTextElement("health.png", "batterySoHText", "% State of Health (± 5%)"));
+   elemContainer.append(
+      buildSimpleIconTextElement("max_batt.png", "maxBatterySoCText", "% Höchststand"),
+      buildSimpleIconTextElement("min_batt.png", "minBatterySoCText", "% Tiefststand"),
+      buildSimpleIconTextElement("avg_batt.png", "avgBatterySoCText", "% Durchschnitt"),
+      buildSimpleIconTextElement("cycle.png", "batteryCyclesText", "Zyklen"),
+      buildSimpleIconTextElement("health.png", "batterySoHText", "% State of Health (± 5%)"),
+   );
    return container;
 }
 
@@ -578,10 +580,17 @@ function processStatistics(data) {
    });
    const totalCapacity = totalEnergy / (deltaSoc / 100);
    const stateOfHealth = (totalCapacity / constants.battery.capacity) * 100;
-   DOM.select("batteryChargeText").setText("+" + (batteryChargeEnergy / 1000).toThreeDecimalString());
-   DOM.select("batteryDischargeText").setText("-" + (batteryDischargeEnergy / 1000).toThreeDecimalString());
+   const maxSoc = Math.max(...data.values.map((a) => a.batt_soc));
+   const minSoc = Math.min(...data.values.map((a) => a.batt_soc));
+   const avgSoc = Math.round(data.values.reduce((acc, a) => acc + a.batt_soc, 0) / data.values.length);
+
+   DOM.select("batteryChargeText").setText((batteryChargeEnergy / 1000).toThreeDecimalString());
+   DOM.select("batteryDischargeText").setText((batteryDischargeEnergy / 1000).toThreeDecimalString());
    DOM.select("batteryCyclesText").setText((Math.round(batteryCycles * 100) / 100).toLocaleString("de-DE"));
    DOM.select("batterySoHText").setText(Math.round(stateOfHealth));
+   DOM.select("maxBatterySoCText").setText(Math.round(maxSoc));
+   DOM.select("minBatterySoCText").setText(Math.round(minSoc));
+   DOM.select("avgBatterySoCText").setText(Math.round(avgSoc));
 
    // Other fun statistics
    const numberOfSmartphoneCharges = Math.round(data.sunEnergy / 15);

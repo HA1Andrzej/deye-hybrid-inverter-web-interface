@@ -33,11 +33,11 @@
 .value {
    font-family: boldest;
    font-size: 130%;
+   margin-right: 7px;
 }
 
 .unit {
    opacity: 0.26;
-   margin-left: 7px;
    font-size: 90%;
    font-family: bold;
    margin-bottom: -5px;
@@ -159,9 +159,8 @@
 }
 
 .batteryArrowImage {
-   width: 80px;
+   width: 40px;
    height: auto;
    object-fit: contain;
-   margin-top: 20px;
-   margin-bottom: 10px;
+   margin: 0px 10px;
 }
