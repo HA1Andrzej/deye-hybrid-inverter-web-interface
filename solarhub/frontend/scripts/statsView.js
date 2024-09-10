@@ -414,19 +414,23 @@ function processStatistics(data) {
    debugText.setContent("");
 
    // Ertrag / Verbrauch
-   DOM.select("sunEnergy").setText((data.sunEnergy / 1000).toThreeDecimalString());
-   DOM.select("loadEnergy").setText((data.loadEnergy / 1000).toThreeDecimalString());
+   const sunEnergyKwh = data.sunEnergy / 1000;
+   const sunEnergyString = sunEnergyKwh < 50 ? sunEnergyKwh.toTwoDecimalString() : Math.round(sunEnergyKwh);
+   DOM.select("sunEnergy").setText(sunEnergyString);
+   const loadEnergyKwh = data.loadEnergy / 1000;
+   const loadEnergyString = loadEnergyKwh < 50 ? loadEnergyKwh.toTwoDecimalString() : Math.round(loadEnergyKwh);
+   DOM.select("loadEnergy").setText(loadEnergyString);
 
    // Peak Values
    DOM.select("maxSunPower").setText("0,000");
    getPeakValues("p_sun", data.start, data.end).then((maxSunPower) => {
       const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-      DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toThreeDecimalString());
+      DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toTwoDecimalString());
    });
    DOM.select("maxLoadPower").setText("0,000");
    getPeakValues("p_load", data.start, data.end).then((maxLoadPower) => {
       const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-      DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toThreeDecimalString());
+      DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toTwoDecimalString());
    });
 
    // Grid Bar

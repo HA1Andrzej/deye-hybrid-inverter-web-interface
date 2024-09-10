@@ -49,6 +49,18 @@ Number.prototype.toThreeDecimalString = function () {
    return res.replace(".", ",");
 };
 
+// Formats a Number to a String (726,4 -> "726,40")
+Number.prototype.toTwoDecimalString = function () {
+   let res = (Math.round(this * 100) / 100).toString();
+   if (!res.includes(".")) {
+      res += ",00";
+   } else {
+      const decimalPart = res.split(".")[1];
+      if (decimalPart.length === 1) res += "0";
+   }
+   return res.replace(".", ",");
+};
+
 // Sets the Status Bar and Tab Bar Color of Safari
 export function setSafariUIColor(color) {
    let themeMetaTag = document.querySelector('meta[name="theme-color"]');
