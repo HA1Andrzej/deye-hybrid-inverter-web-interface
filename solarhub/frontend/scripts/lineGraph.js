@@ -1,9 +1,8 @@
 import DOM from "./dom.js";
-import { isDarkMode } from "./helper.js";
 
 export default class LineGraph {
    constructor() {
-      this.elements = [];
+      this.values = [];
       this.container = DOM.create("div.lineGraphContainer");
       this.subTitleText = DOM.create("t.subTitle").setStyle({ marginBottom: "0px" }).appendTo(this.container);
       this.titleText = DOM.create("t.bigTitle").setText("Daten werden geladen...").appendTo(this.container);
@@ -88,40 +87,64 @@ export default class LineGraph {
       ctx.scale(pixelFactor, pixelFactor);
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
-      ctx.lineWidth = 5;
+      ctx.lineWidth = 3;
       ctx.clearRect(0, 0, width, height);
 
-      const maxValue = Math.max(...this.elements.flatMap((elem) => [elem.a, elem.b]));
+      const maxValue = Math.max(...this.values.flatMap((obj) => Object.values(obj).filter((val) => val !== undefined)));
       const scalingFactor = height / maxValue;
-      const step = width / (this.elements.length - 1);
+      const step = width / (this.values.length - 1);
 
-      const drawCurve = (key, color) => {
-         ctx.beginPath();
-         ctx.fillStyle = color;
-         ctx.globalAlpha = 0.8;
-         this.elements.forEach((elem, index) => {
-            if (elem[key] === -1) return;
+      const drawCurve = (key, fallbackKey, color) => {
+         let pathStartX = 0,
+            prevFallbackMode = false;
+         this.values.forEach((_, index) => {
+            let currentValue = this.values[index][key];
+            let prevValue = this.values[index - 1]?.[key];
+            let nextValue = this.values[index + 1]?.[key];
+
+            const fallbackMode = currentValue === undefined;
+            if (fallbackMode) {
+               return; // Disable non-working Fallback for now
+               currentValue = this.values[index][fallbackKey];
+               prevValue = this.values[index - 1]?.[fallbackKey];
+               nextValue = this.values[index + 1]?.[fallbackKey];
+            }
+
+            const startNewPath = !prevValue || (fallbackMode && !prevFallbackMode);
+            const endPath = !nextValue || (!fallbackMode && prevFallbackMode);
+            prevFallbackMode = fallbackMode;
+
+            if (!currentValue) return;
             const x = index * step;
-            const y = height - elem[key] * scalingFactor;
-            const prevElem = this.elements[index - 1];
-            if (!prevElem || prevElem[key] === -1) {
-               ctx.moveTo(x, height);
-               ctx.lineTo(x, y);
+            const y = height - currentValue * scalingFactor;
+
+            if (startNewPath) {
+               console.log("START PATHHHH", prevValue, fallbackMode, prevFallbackMode);
+               ctx.beginPath();
+               const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+               gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${fallbackMode ? color.a / 4 : color.a / 2.5}`);
+               gradient.addColorStop(0.6, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+               ctx.fillStyle = gradient;
+               ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${fallbackMode ? 0.4 : 1})`;
+               pathStartX = x;
+               ctx.moveTo(x, y);
                return;
             }
-            const nextElem = this.elements[index + 1];
-            if (!nextElem || nextElem[key] === -1) {
+            if (endPath) {
+               console.log("END PATHHHH");
                ctx.lineTo(x, y);
+               ctx.stroke();
                ctx.lineTo(x, height);
+               ctx.lineTo(pathStartX, height);
+               ctx.fill();
                return;
             }
             const nextX = (index + 1) * step;
-            const nextY = height - nextElem[key] * scalingFactor;
+            const nextY = height - nextValue * scalingFactor;
             const cpx = (x + nextX) / 2;
             const cpy = (y + nextY) / 2;
             ctx.quadraticCurveTo(x, y, cpx, cpy);
          });
-         ctx.fill();
 
          // Draw Hover
          if (this.mouseX !== undefined) {
@@ -134,7 +157,7 @@ export default class LineGraph {
             ctx.stroke();
 
             const index = Math.round(this.mouseX / step);
-            const elem = this.elements[index];
+            const elem = this.values[index];
             const val = Math.max(Math.round(elem[key] || 0), 0);
             if (key == "a") this.sunEnergyValueText.setText(val);
             if (key == "b") this.houseEnergyValueText.setText(val);
@@ -148,8 +171,9 @@ export default class LineGraph {
          }
       };
 
-      drawCurve("a", "rgba(255, 199, 0, 1)");
-      drawCurve("b", "rgba(96, 183, 255, 1)");
+      //drawCurve("c", "c_fallback", { r: 0, g: 210, b: 140, a: 0 });
+      drawCurve("a", "a_fallback", { r: 255, g: 199, b: 0, a: 1 });
+      drawCurve("b", "b_fallback", { r: 96, g: 183, b: 255, a: 1 });
    }
 }
 

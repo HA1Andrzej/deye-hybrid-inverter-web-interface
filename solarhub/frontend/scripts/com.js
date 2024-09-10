@@ -47,7 +47,6 @@ export async function predictBatteryRemainingTime(soc, minutes = 7) {
    const start = end - minutes * 60 * 1000;
    const data = await getRawData(start, end, end - start);
    const averagePower = -data[0].p_batt;
-   console.log(averagePower);
    const remainingSoC = (averagePower < 0 ? constants.battery.dischargeLimit.soc : constants.battery.chargeLimit.soc) - soc / 100;
    const remainingTime = Math.abs((constants.battery.capacity * remainingSoC) / averagePower);
    const hoursRemaining = Math.floor(remainingTime);

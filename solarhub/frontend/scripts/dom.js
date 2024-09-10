@@ -146,6 +146,23 @@ export default class DOM {
       });
       return this;
    }
+   onHover(callback, initial) {
+      this.forEvery((elem) => {
+         if (elem._onClickCallback) {
+            elem.removeEventListener("mouseenter", elem._onClickCallback);
+            elem.removeEventListener("mouseleave", elem._onClickCallback);
+         }
+         elem._onHoverCallback = (event) => {
+            if (event.type === "mouseenter") {
+               callback();
+            }
+         };
+         elem.addEventListener("mouseenter", elem._onClickCallback);
+         elem.addEventListener("mouseleave", elem._onClickCallback);
+         if (initial) callback();
+      });
+      return this;
+   }
    onTransitionEnd(callback, initial, delayedTrigger) {
       this.forEvery((elem) => {
          elem.addEventListener("transitionend", () => {

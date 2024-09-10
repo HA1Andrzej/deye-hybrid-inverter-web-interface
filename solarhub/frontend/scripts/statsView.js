@@ -352,7 +352,7 @@ barGraph.elementClicked = (data) => {
    lineGraph.setLabels(data.labels);
    processStatistics(data);
 
-   lineGraph.elements = [];
+   lineGraph.values = [];
    lineGraph.setEnergyValues(data.sunEnergy, data.loadEnergy);
    const numberOfBlocks = Math.round((data.end - data.start) / data.blockLength);
    let prevEnd = 0;
@@ -372,9 +372,13 @@ barGraph.elementClicked = (data) => {
             prevEnd = j;
          }
       }
-      lineGraph.elements.push({
-         a: sunPower / cnt || -1,
-         b: loadPower / cnt || -1,
+      const aVal = cnt == 0 ? undefined : sunPower / cnt;
+      const bVal = cnt == 0 ? undefined : loadPower / cnt;
+      lineGraph.values.push({
+         a: aVal,
+         b: bVal,
+         //a_fallback: 200 + Math.random() * 500,
+         //b_fallback: 200 + Math.random() * 500,
       });
    }
    lineGraph.draw();
