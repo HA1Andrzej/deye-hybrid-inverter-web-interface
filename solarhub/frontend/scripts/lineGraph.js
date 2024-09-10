@@ -81,42 +81,29 @@ export default class LineGraph {
       const scalingFactor = height / maxValue;
       const step = width / (this.values.length - 1);
 
-      const drawCurve = (key, fallbackKey, color) => {
-         let pathStartX = 0,
-            prevFallbackMode = false;
+      const drawCurve = (key, color) => {
+         let pathStartX = 0;
          this.values.forEach((_, index) => {
             let currentValue = this.values[index][key];
             let prevValue = this.values[index - 1]?.[key];
             let nextValue = this.values[index + 1]?.[key];
 
-            const fallbackMode = currentValue === undefined;
-            if (fallbackMode) {
-               return; // Disable non-working Fallback for now
-               currentValue = this.values[index][fallbackKey];
-               prevValue = this.values[index - 1]?.[fallbackKey];
-               nextValue = this.values[index + 1]?.[fallbackKey];
-            }
-
-            const startNewPath = !prevValue || (fallbackMode && !prevFallbackMode);
-            const endPath = !nextValue || (!fallbackMode && prevFallbackMode);
-            prevFallbackMode = fallbackMode;
-
             if (!currentValue) return;
             const x = index * step;
             const y = height - currentValue * scalingFactor;
 
-            if (startNewPath) {
+            if (!prevValue) {
                ctx.beginPath();
                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-               gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${fallbackMode ? color.a / 4 : color.a / 2.5}`);
+               gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 2.5}`);
                gradient.addColorStop(0.6, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
                ctx.fillStyle = gradient;
-               ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${fallbackMode ? 0.4 : 1})`;
+               ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
                pathStartX = x;
                ctx.moveTo(x, y);
                return;
             }
-            if (endPath) {
+            if (!nextValue) {
                ctx.lineTo(x, y);
                ctx.stroke();
                ctx.lineTo(x, height);
@@ -156,9 +143,9 @@ export default class LineGraph {
          }
       };
 
-      //drawCurve("c", "c_fallback", { r: 0, g: 210, b: 140, a: 0 });
-      drawCurve("a", "a_fallback", { r: 255, g: 199, b: 0, a: 1 });
-      drawCurve("b", "b_fallback", { r: 96, g: 183, b: 255, a: 1 });
+      //drawCurve("c", { r: 0, g: 210, b: 140, a: 0 });
+      drawCurve("a", { r: 255, g: 199, b: 0, a: 1 });
+      drawCurve("b", { r: 96, g: 183, b: 255, a: 1 });
    }
 }
 

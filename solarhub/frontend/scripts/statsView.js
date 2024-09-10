@@ -303,7 +303,7 @@ async function tabClicked(tabId, greyOut = true) {
       if (tabId == "months") {
          start = new Date(now.getFullYear(), now.getMonth() - i, 1).getTime();
          end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0).getTime() + 86_400_000 - 1000;
-         blockLength = 6 * 60 * 60 * 1000;
+         blockLength = 3 * 60 * 60 * 1000;
          label = new Date(start).toLocaleString("de-DE", { month: "short" });
          title = `${months[new Date(start).getMonth()]} ${new Date(start).getFullYear()}`;
          subTitle = `${new Date(start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })} - ${new Date(end).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}`;
@@ -377,7 +377,6 @@ barGraph.elementClicked = (data) => {
    processStatistics(data);
 
    lineGraph.values = [];
-   //lineGraph.setEnergyValues(data.sunEnergy, data.loadEnergy);
    const numberOfBlocks = Math.round((data.end - data.start) / data.blockLength);
    let prevEnd = 0;
    for (let i = 0; i < numberOfBlocks; i++) {
