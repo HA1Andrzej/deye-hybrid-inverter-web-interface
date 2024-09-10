@@ -225,12 +225,12 @@ function buildBigTitle(icon, subtitle, title) {
 function buildBatteryHealthContainer() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginBottom: "100px" });
    container.append(buildBigTitle("battery.png", "Batteriegesundheit", "So stark wurde die Batterie beansprucht"));
-   const hContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", margin: "30px 0px" }).appendTo(container);
+   const hContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", margin: "40px 0px" }).appendTo(container);
    hContainer.append(
       DOM.create("div").setStyle({ display: "flex", flexDirection: "column", alignItems: "flex-end" }).append(DOM.create("t.value#batteryChargeText"), DOM.create("t.unit").setText("kWh geladen")),
       DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginRight: "20px" }),
    );
-   hContainer.append(DOM.create("img [src=/assets/images/battery_large.png]").setStyle({ width: "60px", objectFit: "contain", marginTop: "-20px" }));
+   hContainer.append(DOM.create("img [src=/assets/images/battery_large.png]").setStyle({ width: "60px", objectFit: "contain", marginTop: "-10px" }));
    hContainer.append(
       DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginLeft: "20px" }),
       DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).append(DOM.create("t.value#batteryDischargeText"), DOM.create("t.unit").setText("kWh entladen")),
@@ -240,8 +240,8 @@ function buildBatteryHealthContainer() {
       buildSimpleIconTextElement("max_batt.png", "maxBatterySoCText", "% Höchststand"),
       buildSimpleIconTextElement("min_batt.png", "minBatterySoCText", "% Tiefststand"),
       buildSimpleIconTextElement("avg_batt.png", "avgBatterySoCText", "% Durchschnitt"),
-      buildSimpleIconTextElement("cycle.png", "batteryCyclesText", "Zyklen"),
-      buildSimpleIconTextElement("health.png", "batterySoHText", "% State of Health (± 5%)"),
+      buildSimpleIconTextElement("batt_cycles.png", "batteryCyclesText", "Zyklen"),
+      buildSimpleIconTextElement("batt_soh.png", "batterySoHText", "% State of Health (± 5%)"),
    );
    return container;
 }
