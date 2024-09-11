@@ -30,9 +30,9 @@ export function build(mainContainer) {
          buildGridRatioBar(),
          buildFinancesContainer(),
          buildPieChartContainer(),
-         buildCo2Container(),
          buildIndependencyBars(),
          buildBatteryHealthContainer(),
+         buildCo2Container(),
          buildKmBars(),
          DOM.create("t#debugText").setStyle({ display: "block", marginTop: "100px" }),
       )
@@ -89,17 +89,21 @@ function buildGridRatioBar() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
    container.append(buildBigTitle("grid_in.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
    const ratioContainer = DOM.create("div#ratioContainer").appendTo(container);
+
    const valuesContainer = DOM.create("div#ratioValuesContainer").appendTo(ratioContainer);
-   DOM.create("img.icon [src=/assets/images/grid_in.png]").appendTo(valuesContainer);
-   DOM.create("t.value#gridSoldValue").appendTo(valuesContainer);
-   DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
-   DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(valuesContainer);
-   DOM.create("img.icon [src=/assets/images/grid_out.png]").appendTo(valuesContainer);
-   DOM.create("t.value#gridBoughtValue").appendTo(valuesContainer);
-   DOM.create("t.unit").setText("kWh").appendTo(valuesContainer);
+   valuesContainer.append(
+      DOM.create("img.icon [src=/assets/images/grid_in.png]").setStyle({ margin: "0px", marginRight: "15px" }),
+      DOM.create("t.value#gridSoldValue"),
+      DOM.create("t.unit").setText("kWh verkauft"),
+      DOM.create("div").setStyle({ flexGrow: 1 }),
+      DOM.create("t.value#gridBoughtValue"),
+      DOM.create("t.unit").setText("kWh eingekauft"),
+      DOM.create("img.icon [src=/assets/images/grid_out.png]").setStyle({ margin: "0px", marginLeft: "15px" }),
+   );
+
    const barContainer = DOM.create("div#ratioBarContainer").appendTo(ratioContainer);
-   DOM.create("div.ratioBar#ratioBarGreen").appendTo(barContainer);
-   DOM.create("div.ratioBar#ratioBarRed").appendTo(barContainer);
+   barContainer.append(DOM.create("div.ratioBar#ratioBarGreen"), DOM.create("div.ratioBar#ratioBarRed"));
+
    const costContainer = DOM.create("div#ratioCostContainer").appendTo(ratioContainer);
    const costBoxIn = DOM.create("div.costBoxGreen").appendTo(costContainer);
    DOM.create("t.costBoxValue#gridSoldCostValue").appendTo(costBoxIn);
@@ -112,7 +116,8 @@ function buildGridRatioBar() {
 // Builds the Finances UI
 function buildFinancesContainer() {
    const financesContainer = DOM.create("div");
-   financesContainer.append(buildBigTitle("coin.png", "Kosten", "So viel Geld sparen wir uns Dank der Solaranlage"));
+   // financesContainer.append(buildBigTitle("coin.png", "Kosten", "So viel Geld sparen wir uns Dank der Solaranlage"));
+   financesContainer.append(buildBigTitle("coin.png", "Kosten", "So viel Geld konnte durch die Solaranlage eingespart werden"));
    const financesInnerContainer = DOM.create("div")
       .setStyle({
          width: "100%",
@@ -447,7 +452,9 @@ function processStatistics(data) {
    DOM.select("gridBoughtCostValue").setText("-" + gridBoughtCost.toEuroString());
    DOM.select("gridSoldValue").setText((gridSoldEnergy / 1000).toTwoDecimalString(50));
    DOM.select("gridBoughtValue").setText((gridBoughtEnergy / 1000).toTwoDecimalString(50));
-   DOM.select("ratioBarGreen").setStyle({ width: `${Math.round((gridSoldEnergy / (gridBoughtEnergy + gridSoldEnergy)) * 100)}%` });
+   const totalGridEnergy = gridBoughtEnergy + gridSoldEnergy;
+   const ratio = totalGridEnergy == 0 ? 0.5 : gridSoldEnergy / totalGridEnergy;
+   DOM.select("ratioBarGreen").setStyle({ width: `${Math.round(ratio * 100)}%` });
 
    // Finances
    const actualCost = gridSoldCost - gridBoughtCost;
