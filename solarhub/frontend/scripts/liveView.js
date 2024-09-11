@@ -104,7 +104,7 @@ function updateMaxValues() {
       loadPowerBar.setInfoText(`Max. ${maxLoadPower.toLocaleString("de-DE")} Watt`);
    });
    const interval = setInterval(() => {
-      if (maxSunPower == undefined || maxLoadPower == undefined) return;
+      if (!maxSunPower || !maxLoadPower) return;
       clearInterval(interval);
       const peakPower = Math.max(maxSunPower, maxLoadPower);
       sunPowerBar.setMax(peakPower);

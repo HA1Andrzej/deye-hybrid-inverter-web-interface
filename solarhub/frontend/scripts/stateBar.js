@@ -43,7 +43,7 @@ export default class StateBar {
    }
    setColor(color) {
       this.barOuter.setStyle({
-         backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.2)`,
+         backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.15)`,
       });
       this.barInner.setStyle({
          backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
@@ -69,7 +69,7 @@ export default class StateBar {
       });
       if (this.iconModeEnabled) {
          this.icon.setStyle({
-            marginLeft: `calc(${ratio * 0.95}% - 12.5px)`,
+            marginLeft: `clamp(0px, calc(${ratio}% - 18px), calc(100% - 25px))`,
          });
       }
       this.setValueText((Math.round(val * 1000) / 1000).toLocaleString("de-DE"));

@@ -170,11 +170,12 @@ function buildCo2Container() {
    container.append(buildBigTitle("leaves.png", "Nachhaltigkeit", "Diese Auswirkungen hat die Solaranlage auf Umwelt und Gesundheit"));
    const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }).appendTo(container);
    elemContainer.append(
-      buildSimpleIconTextElement("mass.png", "co2WeightText", "Kilogramm CO<sub>2</sub> eingespart"),
+      buildSimpleIconTextElement("mass.png", "co2WeightText", "kg CO<sub>2</sub> eingespart"),
       buildSimpleIconTextElement("balloon.png", "co2BalloonsText", "Luftballons voller CO<sub>2</sub>"),
       buildSimpleIconTextElement("car.png", "co2CarKmText", "km Verbrenner äquivalent"),
       buildSimpleIconTextElement("tree.png", "co2TreesText", "Bäume im gleichen Zeitraum"),
-      buildSimpleIconTextElement("coal.png", "co2CoalText", "Kilogramm Kohle nicht verbrannt"),
+      buildSimpleIconTextElement("coal.png", "co2CoalText", "kg Kohle nicht verbrannt"),
+      buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
       buildSimpleIconTextElement("", "", "Gramm Feinstaub vermieden"),
       buildSimpleIconTextElement("", "", "Gramm Stick- & Schwefeloxide vermieden"),
       buildSimpleIconTextElement("", "", "Atemwegserkrankungen vermieden"),
@@ -187,7 +188,7 @@ function buildCo2Container() {
 }
 
 function buildSimpleIconTextElement(icon, id, description) {
-   return DOM.create("div.simpleIconTextElementContainer")
+   return DOM.create("div.simpleIconTextElement")
       .append(DOM.create(`img [src=/assets/images/${icon}]`))
       .append(DOM.create(`t#${id}`).setContent("0"))
       .append(DOM.create("t").setContent(description));
@@ -257,10 +258,11 @@ function buildKmBars() {
    barContainer.append(buildBigTitle("gears.png", "Effizienz der Mobilität", "Die produzierte Menge an Energie würde reichen für..."));
    for (let i = 0; i < 20; i++) {
       const bar = new StateBar();
-      bar.setColor({ r: 238, g: 66, b: 102 });
       bar.setColor({ r: 255, g: 80, b: 122 });
+      // bar.setColor({ r: 10, g: 200, b: 150 });
+      // bar.setColor({ r: 0, g: 0, b: 0 });
       bar.setUnit("Personenkilometer");
-      //bar.iconMode();
+      bar.iconMode();
       kmBars.push(bar);
       barContainer.append(bar.container);
    }
