@@ -12,6 +12,20 @@ def start():
    cursor, conn = dbManager.connect("database.db")
    connectToSerialUsbAdapter()
 
+   from datetime import datetime
+
+   # Removing Section of wrong data.
+   # print("Deleting Section...")
+   # start_time = int(datetime(2024, 9, 18, 9, 0).timestamp() * 1000)  # 18.09.2024 09:00 Uhr
+   # end_time = int(datetime(2024, 9, 18, 19, 0).timestamp() * 1000)  # 18.09.2024 19:00 Uhr
+   # cursor.execute("""
+   #    DELETE FROM logs
+   #    WHERE timestamp BETWEEN ? AND ?
+   # """, (start_time, end_time))
+   # conn.commit()
+   # print("Deleted Section")
+
+
    # Reads data from config.json
    with open('config.json', 'r') as file:
       config = json.load(file)
