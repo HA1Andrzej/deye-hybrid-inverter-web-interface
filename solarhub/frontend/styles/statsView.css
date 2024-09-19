@@ -142,6 +142,11 @@
    box-sizing: border-box;
    transition: 0.2s;
 }
+@media (prefers-color-scheme: dark) {
+   .simpleIconTextElement {
+      border-color: rgba(255, 255, 255, 0.08);
+   }
+}
 
 .simpleIconTextElement img {
    width: 22px;
@@ -152,6 +157,11 @@
 @media (hover: hover) {
    .simpleIconTextElement:hover {
       background-color: rgba(0, 0, 0, 0.05);
+   }
+   @media (prefers-color-scheme: dark) {
+      .simpleIconTextElement:hover {
+         background-color: rgba(255, 255, 255, 0.05);
+      }
    }
    .simpleIconTextElement:hover img {
       transform: scale(1.3);

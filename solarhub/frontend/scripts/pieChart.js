@@ -3,11 +3,13 @@ import DOM from "./dom.js";
 export default class PieChart {
    constructor() {
       this.container = DOM.create("div.pieChartContainer");
-      this.pieChart = DOM.create("div.pieChart").appendTo(this.container);
+      this.centerIcon = DOM.create("div.centerIcon");
+      this.pieChart = DOM.create("div.pieChart").append(this.centerIcon).appendTo(this.container);
       this.legendContainer = DOM.create("div.pieChartLegendContainer").appendTo(this.container);
    }
    setData(data) {
-      this.pieChart.setStyle({ backgroundImage: this.createConicGradient(data) });
+      const gradient = this.createConicGradient(data);
+      this.pieChart.setStyle({ backgroundImage: gradient });
       this.legendContainer.setContent("");
       const sum = data.reduce((acc, elem) => acc + elem.value, 0);
       for (let elem of data) {
@@ -35,6 +37,13 @@ export default class PieChart {
       const gradientString = `conic-gradient(${gradientParts.join(", ")})`;
       return gradientString;
    }
+   setIcon(icon, waveColor, flipDirection) {
+      this.centerIcon.setStyle({ backgroundImage: `url("/assets/images/${icon}")` });
+      if (waveColor) {
+         this.centerIcon.getFirstElement().style.setProperty("--waveColor", `rgba(${waveColor.r}, ${waveColor.g}, ${waveColor.b}, 0.3)`);
+         this.centerIcon.getFirstElement().style.setProperty("--animationName", flipDirection ? "waveOut" : "waveIn");
+      }
+   }
 }
 
 // Styling
@@ -45,7 +54,58 @@ style.innerHTML = `
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
    }
+   .pieChartContainer .centerIcon {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+   .pieChartContainer .centerIcon::before {
+     content: '';
+     position: absolute;
+     border: 8px solid var(--waveColor);
+     border-radius: 50%;
+     transform: scale(0.5);
+     animation: var(--animationName) 1.3s infinite ease-out;
+     pointer-events: none;
+     filter: blur(5px);
+     z-index: 0;
+   }
+   @keyframes waveIn {
+     0% {
+      width: 150px;
+      height: 150px;
+      opacity: 0;
+     }
+     15% {
+      opacity: 1;
+     }
+     100% {
+      width: 30px;
+      height: 30px;
+      opacity: 0;
+     }
+   }
+   @keyframes waveOut {
+     0% {
+      width: 30px;
+      height: 30px;
+      opacity: 1;
+     }
+     100% {
+      width: 150px;
+      height: 150px;
+      opacity: 0;
+     }
+   }
+
    .pieChart {
       width: 160px;
       height: 160px;

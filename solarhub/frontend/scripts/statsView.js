@@ -14,7 +14,8 @@ let updateTimeout = setTimeout(() => {}, 1);
 const amortizationBar = new StateBar();
 const selfSufficiencyBar = new StateBar();
 const selfUseBar = new StateBar();
-const pieChart = new PieChart();
+const energyMixPieChart = new PieChart();
+const energyDistributionPieChart = new PieChart();
 const kmBars = [];
 let kmBarsIgnoreHidden = false;
 let selectedTabId;
@@ -29,7 +30,8 @@ export function build(mainContainer) {
          buildInfoElements(),
          buildGridRatioBar(),
          buildFinancesContainer(),
-         buildPieChartContainer(),
+         buildEnergyMixContainer(),
+         buildEnergyDistributionContainer(),
          buildIndependencyBars(),
          buildBatteryHealthContainer(),
          buildCo2Container(),
@@ -157,11 +159,21 @@ function buildFinancesContainer() {
 }
 
 // Builds the Pie Chart UI
-function buildPieChartContainer() {
-   const pieChartContainer = DOM.create("div");
-   pieChartContainer.append(buildBigTitle("energy_mix.png", "Strommix", "Aus diesen Quellen kommt der von uns verbrauchte Strom"));
-   pieChartContainer.append(pieChart.container);
-   return pieChartContainer;
+function buildEnergyMixContainer() {
+   energyMixPieChart.setIcon("house.png", { r: 96, g: 183, b: 255 }, false);
+   const container = DOM.create("div");
+   container.append(buildBigTitle("energy_mix.png", "Strommix", "Aus diesen Quellen kommt der von uns verbrauchte Strom"));
+   container.append(energyMixPieChart.container);
+   return container;
+}
+
+// Builds the Pie Chart UI
+function buildEnergyDistributionContainer() {
+   energyDistributionPieChart.setIcon("sun.png", { r: 255, g: 199, b: 0 }, true);
+   const container = DOM.create("div");
+   container.append(buildBigTitle("energy_mix.png", "Stromverteilung", "Dahin fließt der von der Solaranlage produzierte Strom"));
+   container.append(energyDistributionPieChart.container);
+   return container;
 }
 
 // Builds the CO2 UI
@@ -259,8 +271,6 @@ function buildKmBars() {
    for (let i = 0; i < 20; i++) {
       const bar = new StateBar();
       bar.setColor({ r: 255, g: 80, b: 122 });
-      // bar.setColor({ r: 10, g: 200, b: 150 });
-      // bar.setColor({ r: 0, g: 0, b: 0 });
       bar.setUnit("Personenkilometer");
       bar.iconMode();
       kmBars.push(bar);
@@ -346,7 +356,7 @@ async function tabClicked(tabId, greyOut = true) {
          const loadEnergy =
             rawData.reduce((acc, a) => {
                const timeDiff = a.timestamp_end - a.timestamp_start;
-               const power = a.p_load;
+               const power = Math.max(0, a.p_load);
                return acc + power * timeDiff;
             }, 0) / 3_600_000;
          barGraph.elements.push({
@@ -397,7 +407,7 @@ barGraph.elementClicked = (data) => {
          if (timestamp > blockEnd) break;
          if (timestamp >= blockStart) {
             sunPower += data.values[j].p_sun;
-            loadPower += data.values[j].p_load;
+            loadPower += Math.max(0, data.values[j].p_load);
             cnt++;
             prevEnd = j;
          }
@@ -407,8 +417,6 @@ barGraph.elementClicked = (data) => {
       lineGraph.values.push({
          a: aVal,
          b: bVal,
-         //a_fallback: 200 + Math.random() * 500,
-         //b_fallback: 200 + Math.random() * 500,
       });
    }
    lineGraph.draw();
@@ -426,12 +434,12 @@ function processStatistics(data) {
    // Peak Values
    DOM.select("maxSunPower").setText("0,00");
    getPeakValues("p_sun", data.start, data.end).then((maxSunPower) => {
-      const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+      //const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
       DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toTwoDecimalString());
    });
    DOM.select("maxLoadPower").setText("0,00");
    getPeakValues("p_load", data.start, data.end).then((maxLoadPower) => {
-      const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
+      //const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
       DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toTwoDecimalString());
    });
 
@@ -477,13 +485,7 @@ function processStatistics(data) {
    const directSunUseEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.min(a.p_sun, a.p_load);
-         return acc + power * timeDiff;
-      }, 0) / 3_600_000;
-   const gridUseEnergy =
-      data.values.reduce((acc, a) => {
-         const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.max(a.p_grid, 0);
+         const power = Math.min(a.p_sun, Math.max(0, a.p_load));
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    const batteryUseEnergy =
@@ -492,21 +494,30 @@ function processStatistics(data) {
          const power = Math.max(a.p_batt - a.p_losses, 0);
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
-   pieChart.setData([
-      { value: gridUseEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netz" },
-      { value: directSunUseEnergy, color: { r: 255, g: 199, b: 0 }, description: "Sonne" },
+   energyMixPieChart.setData([
+      { value: gridBoughtEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzbezug" },
+      { value: directSunUseEnergy, color: { r: 255, g: 199, b: 0 }, description: "Sonne Direkt" },
       { value: batteryUseEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterie" },
    ]);
-   // console.log(gridUseEnergy);
-   // console.log(directSunUseEnergy);
-   // console.log(batteryUseEnergy);
-   // console.log("Sum: " + (gridUseEnergy + directSunUseEnergy + batteryUseEnergy));
-   // console.log(data.loadEnergy);
 
-   //console.log(`SunUse: ${(100 * directSunUseEnergy) / data.loadEnergy} %`);
-   //console.log(`BattUse: ${(100 * batteryUseEnergy) / data.loadEnergy} %`);
-   //console.log(`GridUse: ${(100 * gridUseEnergy) / data.loadEnergy} %`);
-   //console.log(`Sum: ${((directSunUseEnergy + batteryUseEnergy + gridUseEnergy) / data.loadEnergy) * 100} %`);
+   // Energy Disribution
+   const batteryChargeEnergy =
+      data.values.reduce((acc, a) => {
+         const timeDiff = a.timestamp_end - a.timestamp_start;
+         const power = Math.abs(Math.min(a.p_batt, 0));
+         return acc + power * timeDiff;
+      }, 0) / 3_600_000;
+   energyDistributionPieChart.setData([
+      { value: gridSoldEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzeinspeisung" },
+      { value: directSunUseEnergy, color: { r: 48, g: 150, b: 255 }, description: "Direktverbrauch" },
+      { value: batteryChargeEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterieladung" },
+   ]);
+
+   // Autarkiegrad & Eigenverbrauch
+   const selfSufficiencyValue = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / (gridBoughtEnergy + directSunUseEnergy + batteryUseEnergy));
+   selfSufficiencyBar.setValue(selfSufficiencyValue);
+   const selfUseValue = Math.round((100 * (directSunUseEnergy + batteryChargeEnergy)) / (gridSoldEnergy + directSunUseEnergy + batteryChargeEnergy));
+   selfUseBar.setValue(selfUseValue);
 
    // CO2 View
    const savedCo2 = Math.round((data.sunEnergy / 1000) * 391);
@@ -522,12 +533,6 @@ function processStatistics(data) {
    DOM.select("co2CarKmText").setText(co2ToCar);
    DOM.select("co2TreesText").setText(numberOfTrees);
    DOM.select("co2CoalText").setText((gramsOfSavedCoal / 1000).toTwoDecimalString(50));
-
-   // Autarkiegrad & Eigenverbrauch
-   const selfSufficiencyValue = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / data.loadEnergy);
-   selfSufficiencyBar.setValue(selfSufficiencyValue);
-   const selfUseValue = Math.round((100 * (data.sunEnergy - gridSoldEnergy)) / data.sunEnergy);
-   selfUseBar.setValue(selfUseValue);
 
    // Km Bars
    const ranges = [
@@ -573,12 +578,6 @@ function processStatistics(data) {
    updateBars();
 
    // Battery Health
-   const batteryChargeEnergy =
-      data.values.reduce((acc, a) => {
-         const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.abs(Math.min(a.p_batt, 0));
-         return acc + power * timeDiff;
-      }, 0) / 3_600_000;
    const batteryDischargeEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;

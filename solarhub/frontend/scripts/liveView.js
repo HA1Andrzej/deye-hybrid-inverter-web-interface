@@ -51,6 +51,7 @@ export async function build(mainContainer) {
 function updateLiveData() {
    getLiveData().then((data) => {
       if (!data) return;
+      console.log(data);
       const serverTime = new Date(data.timestamp);
       const hours = String(serverTime.getHours()).padStart(2, "0");
       const minutes = String(serverTime.getMinutes()).padStart(2, "0");
@@ -61,7 +62,7 @@ function updateLiveData() {
       dateTextView.setText(`${day}. ${month} ${year}`);
 
       sunPowerBar.setValue(data.p_sun);
-      loadPowerBar.setValue(data.p_inverter);
+      loadPowerBar.setValue(data.p_load);
       batterySocBar.setValue(data.batt_soc);
       if (data.batt_soc >= constants.battery.chargeLimit.soc * 100) {
          batterySocBar.setInfoText("Batterie voll");

@@ -88,11 +88,11 @@ export default class LineGraph {
             let prevValue = this.values[index - 1]?.[key];
             let nextValue = this.values[index + 1]?.[key];
 
-            if (!currentValue) return;
+            if (isNaN(currentValue)) return;
             const x = index * step;
             const y = height - currentValue * scalingFactor;
 
-            if (!prevValue) {
+            if (isNaN(prevValue)) {
                ctx.beginPath();
                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
                gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 2.5}`);
@@ -103,7 +103,7 @@ export default class LineGraph {
                ctx.moveTo(x, y);
                return;
             }
-            if (!nextValue) {
+            if (isNaN(nextValue)) {
                ctx.lineTo(x, y);
                ctx.stroke();
                ctx.lineTo(x, height);
