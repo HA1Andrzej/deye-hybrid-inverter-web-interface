@@ -16,8 +16,8 @@ def start():
 
    # Removing Section of wrong data.
    # print("Deleting Section...")
-   # start_time = int(datetime(2024, 9, 18, 9, 0).timestamp() * 1000)  # 18.09.2024 09:00 Uhr
-   # end_time = int(datetime(2024, 9, 18, 19, 0).timestamp() * 1000)  # 18.09.2024 19:00 Uhr
+   # start_time = int(datetime(2024, 9, 18, 20, 30).timestamp() * 1000)  # 18.09.2024 20:30 Uhr
+   # end_time = int(datetime(2024, 9, 18, 22, 0).timestamp() * 1000)  # 18.09.2024 22:00 Uhrs
    # cursor.execute("""
    #    DELETE FROM logs
    #    WHERE timestamp BETWEEN ? AND ?
