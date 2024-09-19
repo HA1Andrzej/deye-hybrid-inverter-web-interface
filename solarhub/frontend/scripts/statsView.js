@@ -203,7 +203,7 @@ function buildIndependencyBars() {
    selfSufficiencyBar.setColor({ r: 0, g: 210, b: 140 });
    selfSufficiencyBar.setUnit("%");
    selfSufficiencyBar.setMax(100);
-   selfSufficiencyBar.setValue(93);
+   selfSufficiencyBar.setValue(50);
    selfSufficiencyBar.setInfoText("Autarkiegrad");
    barContainer.append(selfSufficiencyBar.container);
 
@@ -212,7 +212,7 @@ function buildIndependencyBars() {
    selfUseBar.setColor({ r: 0, g: 176, b: 155 });
    selfUseBar.setUnit("%");
    selfUseBar.setMax(100);
-   selfUseBar.setValue(69);
+   selfUseBar.setValue(50);
    selfUseBar.setInfoText("Eigenverbrauch");
    barContainer.append(selfUseBar.container);
    return barContainer;
@@ -483,7 +483,7 @@ function processStatistics(data) {
    const gridUseEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.max(a.p_grid - a.p_losses, 0);
+         const power = Math.max(a.p_grid, 0);
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    const batteryUseEnergy =
@@ -497,6 +497,12 @@ function processStatistics(data) {
       { value: directSunUseEnergy, color: { r: 255, g: 199, b: 0 }, description: "Sonne" },
       { value: batteryUseEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterie" },
    ]);
+   // console.log(gridUseEnergy);
+   // console.log(directSunUseEnergy);
+   // console.log(batteryUseEnergy);
+   // console.log("Sum: " + (gridUseEnergy + directSunUseEnergy + batteryUseEnergy));
+   // console.log(data.loadEnergy);
+
    //console.log(`SunUse: ${(100 * directSunUseEnergy) / data.loadEnergy} %`);
    //console.log(`BattUse: ${(100 * batteryUseEnergy) / data.loadEnergy} %`);
    //console.log(`GridUse: ${(100 * gridUseEnergy) / data.loadEnergy} %`);
@@ -518,10 +524,10 @@ function processStatistics(data) {
    DOM.select("co2CoalText").setText((gramsOfSavedCoal / 1000).toTwoDecimalString(50));
 
    // Autarkiegrad & Eigenverbrauch
-   const selfSufficiency = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / data.loadEnergy);
-   selfSufficiencyBar.setValue(selfSufficiency);
-   const selfUse = Math.round((100 * (data.sunEnergy - gridSoldEnergy)) / data.sunEnergy);
-   selfUseBar.setValue(selfUse);
+   const selfSufficiencyValue = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / data.loadEnergy);
+   selfSufficiencyBar.setValue(selfSufficiencyValue);
+   const selfUseValue = Math.round((100 * (data.sunEnergy - gridSoldEnergy)) / data.sunEnergy);
+   selfUseBar.setValue(selfUseValue);
 
    // Km Bars
    const ranges = [
