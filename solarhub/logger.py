@@ -92,10 +92,10 @@ def readLiveValues(buffer):
    for name in registers:
       address = registers[name]["address"]
       result = readRegister(address)
-      if not result.isError():
-         val = result.registers[0]
-         if registers[name]["isTwosComplement"] and val > 32767: val -= 65536
-         buffer[name] = val;
+      if result is None or result.isError(): continue
+      val = result.registers[0]
+      if registers[name]["isTwosComplement"] and val > 32767: val -= 65536
+      buffer[name] = val;
    buffer["timestamp"] = int(time.time()*1000)
    buffer["p_load"] = buffer.get("p_inverter", 0) + buffer.get("p_grid", 0);
    buffer["p_sun"] = buffer.get("p_string1", 0) + buffer.get("p_string2", 0) + buffer.get("p_gen", 0)
@@ -104,6 +104,7 @@ def readLiveValues(buffer):
 # Check Data and send warning messages
 notifications = {}
 def checkAndWarn(buffer):
+   global notifications
    batt_soc = buffer.get("batt_soc", 0)
    chargeSocLimit = 100*config["battery"]["chargeLimit"]["soc"]
    dischargeSocLimit = 100*config["battery"]["dischargeLimit"]["soc"]
@@ -114,7 +115,7 @@ def checkAndWarn(buffer):
       if batt_soc > threshold:
          notifications[f"battery{threshold}"] = False
 
-   if batt_soc == chargeSocLimit and not (notifications.get("batteryfull") or False):
+   if batt_soc >= chargeSocLimit and not (notifications.get("batteryfull") or False):
       notifications["batteryfull"] = True
       sendTelegramMessage("🥳 Batterie voll")
    if batt_soc < chargeSocLimit - 10:
@@ -123,19 +124,32 @@ def checkAndWarn(buffer):
 
 # Reads the value of a register at the given address
 def readRegister(address):
-   return client.read_holding_registers(address, 1, slave=0, timeout=0.5)
+   try:
+      result = client.read_holding_registers(address, 1, slave=0, timeout=0.5)
+      return result
+   except Exception as e:
+      print(f"Exception occurred while reading register {address}: {e}")
+      return None
 
 # Writes the given value to the given register
 registerCache = {}
-def writeRegister(address, value, attemptCounter=0):
+def writeRegister(address, value, maxAttempts=5):
+   global registerCache
    if registerCache.get(address) == value: return
    registerCache[address] = value
-   result = client.write_registers(address, [value], slave=0, timeout=0.5)
-   if result.isError():
-      print(f"Failed to write to register {address}, trying again (Attempt {attemptCounter+1})")
+   attemptCounter = 0
+   while attemptCounter < maxAttempts:
+      try:
+         result = client.write_registers(address, [value], slave=0, timeout=0.5)
+         if not result.isError():
+            print(f"Successfully wrote {value} to register {address}")
+            break
+      except Exception as e:
+         print(f"Exception occurred while writing to register {address}: {e}")
+      attemptCounter += 1
       time.sleep(0.1)
-      if attemptCounter < 5: writeRegister(address, value, attemptCounter+1)
    else:
-      print(f"Successfully wrote {value} to register {address}")
+      print(f"Failed to write to register {address} after {maxAttempts} attempts.")
+
 
 ### End of File

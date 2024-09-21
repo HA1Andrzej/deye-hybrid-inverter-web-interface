@@ -2,7 +2,7 @@ import DOM from "./dom.js";
 
 export default class LineGraph {
    constructor() {
-      this.values = [];
+      this.data = {};
       this.container = DOM.create("div.lineGraphContainer");
       this.subTitleText = DOM.create("t.subTitle").setStyle({ marginBottom: "0px" }).appendTo(this.container);
       this.titleText = DOM.create("t.bigTitle").setText("Daten werden geladen...").appendTo(this.container);
@@ -77,31 +77,29 @@ export default class LineGraph {
       ctx.lineWidth = 3;
       ctx.clearRect(0, 0, width, height);
 
-      const maxValue = Math.max(...this.values.flatMap((obj) => Object.values(obj).filter((val) => val !== undefined)));
-      const scalingFactor = height / maxValue;
-      const step = width / (this.values.length - 1);
+      const drawCurve = (values, color, scalingFactor) => {
+         const step = width / (values.length - 1);
 
-      const drawCurve = (key, color) => {
          let pathStartX = 0;
-         this.values.forEach((_, index) => {
-            let currentValue = this.values[index][key];
-            let prevValue = this.values[index - 1]?.[key];
-            let nextValue = this.values[index + 1]?.[key];
+         for (let i = 0; i < values.length; i++) {
+            let currentValue = values[i];
+            let prevValue = values[i - 1];
+            let nextValue = values[i + 1];
 
-            if (isNaN(currentValue)) return;
-            const x = index * step;
+            if (isNaN(currentValue)) continue;
+            const x = i * step;
             const y = height - currentValue * scalingFactor;
 
             if (isNaN(prevValue)) {
                ctx.beginPath();
                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-               gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a / 2.5}`);
+               gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, 0.4)`);
                gradient.addColorStop(0.6, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
                ctx.fillStyle = gradient;
                ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, 1)`;
                pathStartX = x;
                ctx.moveTo(x, y);
-               return;
+               continue;
             }
             if (isNaN(nextValue)) {
                ctx.lineTo(x, y);
@@ -109,14 +107,14 @@ export default class LineGraph {
                ctx.lineTo(x, height);
                ctx.lineTo(pathStartX, height);
                ctx.fill();
-               return;
+               continue;
             }
-            const nextX = (index + 1) * step;
+            const nextX = (i + 1) * step;
             const nextY = height - nextValue * scalingFactor;
             const cpx = (x + nextX) / 2;
             const cpy = (y + nextY) / 2;
             ctx.quadraticCurveTo(x, y, cpx, cpy);
-         });
+         }
 
          // Draw Hover
          if (this.mouseX !== undefined) {
@@ -129,7 +127,7 @@ export default class LineGraph {
             ctx.stroke();
 
             const index = Math.round(this.mouseX / step);
-            const elem = this.values[index];
+            const elem = values[index];
             // const val = Math.max(Math.round(elem[key] || 0), 0);
             // if (key == "a") this.sunEnergyValueText.setText(val);
             // if (key == "b") this.houseEnergyValueText.setText(val);
@@ -143,9 +141,12 @@ export default class LineGraph {
          }
       };
 
-      //drawCurve("c", { r: 0, g: 210, b: 140, a: 0 });
-      drawCurve("a", { r: 255, g: 199, b: 0, a: 1 });
-      drawCurve("b", { r: 96, g: 183, b: 255, a: 1 });
+      const enabledData = Object.values(this.data).filter((v) => v.enabled);
+      const maxValue = Math.max(...enabledData.flatMap((v) => v.values.filter((a) => !isNaN(a))));
+      enabledData.forEach((v) => {
+         const scalingFactor = height / maxValue;
+         drawCurve(v.values, v.color, scalingFactor);
+      });
    }
 }
 
