@@ -24,12 +24,11 @@ export function build(mainContainer) {
    statsContainer.appendTo(mainContainer);
    statsContainer.append(buildTabs());
    statsContainer.append(barGraph.container).append(lineGraph.container);
-   const batteryGraphButton = DOM.create("div.button").setText("Batterieverlauf einblenden");
    DOM.create("div")
       .setStyle({ maxWidth: "550px" })
       .append(
+         buildGraphCheckBoxes(),
          buildInfoElements(),
-         batteryGraphButton,
          buildGridRatioBar(),
          buildFinancesContainer(),
          buildEnergyMixContainer(),
@@ -43,16 +42,15 @@ export function build(mainContainer) {
       .appendTo(statsContainer);
    DOM.select(".tab#days").click();
 
-   batteryGraphButton.onClick(() => {
-      if (lineGraph.data.battSoC.enabled) {
-         lineGraph.data.battSoC.enabled = false;
-         batteryGraphButton.setText("Batterieverlauf einblenden");
-      } else {
-         lineGraph.data.battSoC.enabled = true;
-         batteryGraphButton.setText("Batterieverlauf ausblenden");
-      }
-      lineGraph.draw();
-   });
+   lineGraph.data = {
+      load: { name: "Verbrauch", color: { r: 96, g: 183, b: 255, a: 1 }, enabled: true, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+      sun: { name: "Produktion", color: { r: 255, g: 199, b: 0, a: 1 }, enabled: true, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+      battSoC: { name: "Batteriestand", color: { r: 0, g: 210, b: 140, a: 1 }, enabled: false, scalingGroup: 1, showInHover: true, unit: "%", values: [] },
+      battLimitLower: { name: "MaxSoC", color: { r: 0, g: 210, b: 140, a: 0.3 }, enabled: false, scalingGroup: 1, showInHover: false, values: [] },
+      battLimitUpper: { name: "MinSoC", color: { r: 0, g: 210, b: 140, a: 0.3 }, enabled: false, scalingGroup: 1, showInHover: false, values: [] },
+      gridOut: { name: "Netzimport", color: { r: 255, g: 44, b: 133, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+      gridIn: { name: "Netzexport", color: { r: 0, g: 176, b: 155, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+   };
 }
 
 // Builds the Tabs UI
@@ -81,21 +79,39 @@ function buildTabs() {
 function buildInfoElements() {
    const container = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", marginTop: "40px" });
    DOM.create("div")
-      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center" })
+      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: "10px" })
       .appendTo(container)
-      .append(
-         buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"),
-         DOM.create("div").setStyle({ width: "20px" }),
-         buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"),
-      );
+      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"));
    DOM.create("div")
-      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center" })
+      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: "10px" })
       .appendTo(container)
-      .append(
-         buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"),
-         DOM.create("div").setStyle({ width: "20px" }),
-         buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"),
-      );
+      .append(buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"));
+   return container;
+}
+
+function buildGraphCheckBoxes() {
+   const container = DOM.create("div").setStyle({ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap" });
+   const checkBoxes = [
+      { name: "Produktion", keys: ["sun"], initiallyChecked: true },
+      { name: "Verbrauch", keys: ["load"], initiallyChecked: true },
+      { name: "Batterie", keys: ["battSoC", "battLimitUpper", "battLimitLower"], initiallyChecked: false },
+      { name: "Netz", keys: ["gridIn", "gridOut"], initiallyChecked: false },
+   ];
+   for (let checkBox of checkBoxes) {
+      const checkBoxContainer = DOM.create("div").setStyle({ display: "flex", alignItems: "center", padding: "14px" }).appendTo(container);
+      const box = DOM.create("input [type=checkbox]").setStyle({ marginRight: "7px" });
+      box.getFirstElement().checked = checkBox.initiallyChecked;
+      const label = DOM.create("label").setText(checkBox.name);
+      checkBoxContainer.append(box, label);
+
+      box.onChange(() => {
+         const isChecked = box.getFirstElement().checked;
+         for (let key of checkBox.keys) {
+            lineGraph.data[key].enabled = isChecked;
+         }
+         lineGraph.draw();
+      });
+   }
    return container;
 }
 
@@ -351,7 +367,8 @@ async function tabClicked(tabId, greyOut = true) {
       if (tabId == "total") {
          start = await getOldestTimestamp();
          end = Date.now();
-         blockLength = 24 * 60 * 60 * 1000;
+         // blockLength = 24 * 60 * 60 * 1000;
+         blockLength = (end - start) / 96;
          title = "Gesamtbilanz";
          subTitle = `${new Date(start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })} bis heute`;
          const numberOfDays = Math.round((end - start) / (24 * 60 * 60 * 1000));
@@ -406,11 +423,11 @@ barGraph.elementClicked = (data) => {
    lineGraph.setLabels(data.labels);
    processStatistics(data);
 
-   lineGraph.data = {
-      sun: { color: { r: 255, g: 199, b: 0 }, enabled: true, values: [] },
-      load: { color: { r: 96, g: 183, b: 255 }, enabled: true, values: [] },
-      battSoC: { color: { r: 0, g: 210, b: 140 }, enabled: false, values: [] },
-   };
+   // Reset Graph Values
+   Object.values(lineGraph.data).forEach((a) => {
+      a.values = [];
+   });
+
    const numberOfBlocks = Math.round((data.end - data.start) / data.blockLength);
    let prevEnd = 0;
    for (let i = 0; i < numberOfBlocks; i++) {
@@ -419,6 +436,8 @@ barGraph.elementClicked = (data) => {
       let sunPower = 0;
       let loadPower = 0;
       let battSoC = 0;
+      let gridInPower = 0;
+      let gridOutPower = 0;
       let cnt = 0;
       for (let j = prevEnd; j < data.values.length; j++) {
          const timestamp = data.values[j].timestamp_start;
@@ -427,16 +446,19 @@ barGraph.elementClicked = (data) => {
             sunPower += data.values[j].p_sun;
             loadPower += Math.max(0, data.values[j].p_load);
             battSoC += data.values[j].batt_soc;
+            gridInPower += Math.abs(Math.min(0, data.values[j].p_grid));
+            gridOutPower += Math.max(0, data.values[j].p_grid);
             cnt++;
             prevEnd = j;
          }
       }
-      const sun = cnt == 0 ? undefined : sunPower / cnt;
-      const load = cnt == 0 ? undefined : loadPower / cnt;
-      const batt = cnt == 0 ? undefined : (50 * battSoC) / cnt;
-      lineGraph.data.sun.values.push(sun);
-      lineGraph.data.load.values.push(load);
-      lineGraph.data.battSoC.values.push(batt);
+      lineGraph.data.sun.values.push(cnt == 0 ? undefined : sunPower / cnt);
+      lineGraph.data.load.values.push(cnt == 0 ? undefined : loadPower / cnt);
+      lineGraph.data.battSoC.values.push(cnt == 0 ? undefined : battSoC / cnt);
+      lineGraph.data.battLimitLower.values.push(100 * constants.battery.dischargeLimit.soc);
+      lineGraph.data.battLimitUpper.values.push(100 * constants.battery.chargeLimit.soc);
+      lineGraph.data.gridIn.values.push(cnt == 0 ? undefined : gridInPower / cnt);
+      lineGraph.data.gridOut.values.push(cnt == 0 ? undefined : gridOutPower / cnt);
    }
    lineGraph.draw();
 };

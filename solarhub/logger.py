@@ -15,15 +15,17 @@ def start():
    from datetime import datetime
 
    # Removing Section of wrong data.
-   # print("Deleting Section...")
-   # start_time = int(datetime(2024, 9, 18, 20, 30).timestamp() * 1000)  # 18.09.2024 20:30 Uhr
-   # end_time = int(datetime(2024, 9, 18, 22, 0).timestamp() * 1000)  # 18.09.2024 22:00 Uhrs
-   # cursor.execute("""
-   #    DELETE FROM logs
-   #    WHERE timestamp BETWEEN ? AND ?
-   # """, (start_time, end_time))
-   # conn.commit()
-   # print("Deleted Section")
+   print("Deleting Section...")
+   start_time = int(datetime(2024, 9, 19, 11, 00).timestamp() * 1000)  # 21.09.2024 12:00 Uhr
+   end_time = int(datetime(2024, 9, 19, 18, 30).timestamp() * 1000)  # 21.09.2024 18:00 Uhr
+   cursor.execute("""
+      UPDATE logs
+      SET p_grid = 0, p_load = 0
+      WHERE timestamp BETWEEN ? AND ?
+   """, (start_time, end_time))
+   conn.commit()
+   print("Updated Section")
+
 
 
    # Reads data from config.json
