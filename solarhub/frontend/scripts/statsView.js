@@ -209,7 +209,7 @@ function buildEnergyDistributionContainer() {
 function buildCo2Container() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
    container.append(buildBigTitle("leaves.png", "Nachhaltigkeit", "Diese Auswirkungen hat die Solaranlage auf Umwelt und Gesundheit"));
-   const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }).appendTo(container);
+   const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
    elemContainer.append(
       buildSimpleIconTextElement("mass.png", "co2WeightText", "kg CO<sub>2</sub> eingespart"),
       buildSimpleIconTextElement("balloon.png", "co2BalloonsText", "Luftballons voller CO<sub>2</sub>"),

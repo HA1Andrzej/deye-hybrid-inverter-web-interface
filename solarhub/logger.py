@@ -15,16 +15,27 @@ def start():
    from datetime import datetime
 
    # Removing Section of wrong data.
-   print("Deleting Section...")
-   start_time = int(datetime(2024, 9, 19, 11, 00).timestamp() * 1000)  # 21.09.2024 12:00 Uhr
-   end_time = int(datetime(2024, 9, 19, 18, 30).timestamp() * 1000)  # 21.09.2024 18:00 Uhr
-   cursor.execute("""
-      UPDATE logs
-      SET p_grid = 0, p_load = 0
-      WHERE timestamp BETWEEN ? AND ?
-   """, (start_time, end_time))
-   conn.commit()
-   print("Updated Section")
+   # print("Deleting Section...")
+   # start_time = int(datetime(2024, 9, 19, 11, 00).timestamp() * 1000)  # 21.09.2024 12:00 Uhr
+   # end_time = int(datetime(2024, 9, 19, 18, 30).timestamp() * 1000)  # 21.09.2024 18:00 Uhr
+   # cursor.execute("""
+   #    UPDATE logs
+   #    SET p_grid = 0, p_load = 0
+   #    WHERE timestamp BETWEEN ? AND ?
+   # """, (start_time, end_time))
+   # conn.commit()
+   # print("Updated Section")
+
+
+   # Test Read/Write of Register
+   # zero_export_power_register = 104
+   # result = readRegister(zero_export_power_register)
+   # print(f"Initial value of register {zero_export_power_register}: {result.registers[0] if result and not result.isError() else 'Error reading register'}")
+   # time.sleep(1)
+   # writeRegister(zero_export_power_register, 65516) # -20 = 65516
+   # time.sleep(1)
+   # result = readRegister(zero_export_power_register)
+   # print(f"Value of register {zero_export_power_register} after writing -20: {result.registers[0] if result and not result.isError() else 'Error reading register'}")
 
 
 
