@@ -6,7 +6,7 @@ _This project is currently in its early stages and is still under development. W
 
 SolarHub is a fully integrated web-based interface designed for the Deye / Sunsync 3-Phase Hybrid Solar Inverter (6kW, 8kW, 10kW, 12kW). The system continuously collects and stores critical data from the inverter at a high frequency. Through the responsive web interface, users can monitor real-time information, view historical data, and analyze important statistics.
 
-![Screenshot of the Interface on Desktop](https://clippy.cc/postimg/684856207112)
+![Screenshot of the Interface on Desktop](https://clippy.cc/postimg/203952220775)
 
 ### Features
 
@@ -30,7 +30,7 @@ SolarHub is a fully integrated web-based interface designed for the Deye / Sunsy
 
 In this section, we'll walk you through the hardware and software setup for SolarHub, step by step. Even if you're new to working with Raspberry Pi or setting up solar inverters, this guide is designed to be easy to follow.
 
-![Setup Diagram](https://clippy.cc/postimg/510832930572)
+![Setup Diagram](https://clippy.cc/postimg/420238806750)
 
 ### Hardware Setup
 
