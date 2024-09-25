@@ -34,6 +34,8 @@ export async function build(mainContainer) {
    batterySocBar.setColor({ r: 0, g: 210, b: 140 });
    batterySocBar.setUnit("%");
    batterySocBar.setMax(100);
+   batterySocBar.addMarker(100 * constants.battery.dischargeLimit.soc);
+   batterySocBar.addMarker(100 * constants.battery.chargeLimit.soc);
    batterySocBar.container.appendTo(liveContainer);
 
    gridPowerBar.setUnit("Watt");

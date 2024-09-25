@@ -78,6 +78,13 @@ export default class StateBar {
    setValueText(text) {
       this.value.setText(text);
    }
+   addMarker(val) {
+      const marker = DOM.create("div.marker").appendTo(this.container);
+      let ratio = Math.min((val / this.maxValue) * 100, 100);
+      marker.setStyle({
+         left: ratio + "%",
+      });
+   }
 }
 
 // Styling
@@ -90,6 +97,7 @@ style.innerHTML = `
       transition: 0.3s;
       display: flex;
       flex-direction: column;
+      position: relative;
    }
 
    .stateBarIconTextContainer {
@@ -138,6 +146,7 @@ style.innerHTML = `
       border-radius: 30px;
       margin-top: 15px;
       box-sizing: border-box;
+      z-index: 2;
    }
 
    .stateBarInner {
@@ -147,6 +156,16 @@ style.innerHTML = `
       margin-top: -15px;
       border-radius: 30px;
       transition: 0.3s;
+      z-index: 3;
+   }
+   .stateBarContainer .marker {
+      width: 3px;
+      border-radius: 10px;
+      height: 30px;
+      bottom: -5px;
+      background-color: var(--textColor);
+      position: absolute;
+      z-index: 4;
    }
 `;
 document.head.appendChild(style);
