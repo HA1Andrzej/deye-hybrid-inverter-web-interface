@@ -32,11 +32,10 @@ def start():
    # result = readRegister(zero_export_power_register)
    # print(f"Initial value of register {zero_export_power_register}: {result.registers[0] if result and not result.isError() else 'Error reading register'}")
    # time.sleep(1)
-   # writeRegister(zero_export_power_register, 65516) # -20 = 65516
+   # writeRegister(zero_export_power_register, 65516) # equals -20 (65516)
    # time.sleep(1)
    # result = readRegister(zero_export_power_register)
    # print(f"Value of register {zero_export_power_register} after writing -20: {result.registers[0] if result and not result.isError() else 'Error reading register'}")
-
 
 
    # Reads data from config.json
@@ -49,7 +48,7 @@ def start():
    prevTime = time.time()
    while True:
       readLiveValues(liveValueBuffer)
-      checkAndWarn(liveValueBuffer);
+      manageBattery(liveValueBuffer);
 
       # Append liveValues to valueHistory
       for key, value in liveValueBuffer.items():
@@ -69,13 +68,6 @@ def start():
          averages = {name: sum(valueHistory[name]) / len(valueHistory[name]) for name in valueHistory}
          valueHistory = {}
          dbManager.addRowToTable("logs", averages)
-
-      # Limit Battery SoC
-      batt_soc = liveValueBuffer.get("batt_soc", 0)
-      maxDischargeCurrent = 0 if batt_soc <= 100*config["battery"]["dischargeLimit"]["soc"] else config["battery"]["dischargeLimit"]["maxCurrent"]
-      writeRegister(config["battery"]["dischargeLimit"]["register"], maxDischargeCurrent)
-      maxChargeCurrent = 0 if batt_soc >= 100*config["battery"]["chargeLimit"]["soc"] else config["battery"]["chargeLimit"]["maxCurrent"]
-      writeRegister(config["battery"]["chargeLimit"]["register"], maxChargeCurrent)
 
       # Save all changes and wait
       conn.commit()
@@ -110,30 +102,38 @@ def readLiveValues(buffer):
       if registers[name]["isTwosComplement"] and val > 32767: val -= 65536
       buffer[name] = val;
    buffer["timestamp"] = int(time.time()*1000)
-   # buffer["p_load"] = buffer.get("p_inverter", 0) + buffer.get("p_grid", 0);
-   buffer["p_sun"] = buffer.get("p_string1", 0) + buffer.get("p_string2", 0) + buffer.get("p_gen", 0)
+   buffer["p_sun"] = max(0, buffer.get("p_string1", 0) + buffer.get("p_string2", 0) + buffer.get("p_gen", 0))
    buffer["p_losses"] = buffer.get("p_sun", 0) + buffer.get("p_batt", 0) + buffer.get("p_grid", 0) - buffer.get("p_load", 0)
 
-# Check Data and send warning messages
-notifications = {}
-def checkAndWarn(buffer):
-   global notifications
-   batt_soc = buffer.get("batt_soc", 0)
-   chargeSocLimit = 100*config["battery"]["chargeLimit"]["soc"]
-   dischargeSocLimit = 100*config["battery"]["dischargeLimit"]["soc"]
-   for threshold in [dischargeSocLimit+10, dischargeSocLimit+1]:
-      if batt_soc <= threshold and not (notifications.get(f"battery{threshold}") or False):
-         notifications[f"battery{threshold}"] = True
-         sendTelegramMessage(f"⚠️ Batterie fast leer (Noch {batt_soc}%)")
-      if batt_soc > threshold:
-         notifications[f"battery{threshold}"] = False
+# Check Data, Perform Actions and Send Warning Messages
+def manageBattery(buffer):
+   battSoC = buffer.get("batt_soc", 0)
+   maxSoC = 100*config["battery"]["chargeLimit"]["soc"]
+   chargeCurrent = config["battery"]["chargeLimit"]["maxCurrent"]
+   minSoC = 100*config["battery"]["dischargeLimit"]["soc"]
+   dischargeCurrent = config["battery"]["dischargeLimit"]["maxCurrent"]
 
-   if batt_soc >= chargeSocLimit and not (notifications.get("batteryfull") or False):
-      notifications["batteryfull"] = True
-      sendTelegramMessage("🥳 Batterie voll")
-   if batt_soc < chargeSocLimit - 10:
-      notifications["batteryfull"] = False
-   # ToDo: Anomalies ("Anomalie erkannt: "...)
+   # Limit Battery SoC
+   maxDischargeCurrent = 0 if battSoC <= minSoC else dischargeCurrent
+   writeRegister(config["battery"]["dischargeLimit"]["register"], maxDischargeCurrent)
+   maxChargeCurrent = 0 if battSoC >= maxSoC else chargeCurrent
+   writeRegister(config["battery"]["chargeLimit"]["register"], maxChargeCurrent)
+
+   # Send Telegram Messages
+   sendOneTimeMessage("⚠️ Batterie bald leer", battSoC <= minSoC+10, battSoC > minSoC+20)
+   sendOneTimeMessage("🪫 Batterie leer", battSoC <= minSoC, battSoC > minSoC+10)
+   sendOneTimeMessage("🔋 Batterie voll", battSoC >= maxSoC, battSoC < maxSoC-10)
+
+# Sends a One-Time Telegram Message to the User
+notifications = {}
+def sendOneTimeMessage(message, condition, resetCondition):
+   global notifications
+   key = hash(message)
+   if condition and not (notifications.get(key) or False):
+      notifications[key] = True
+      sendTelegramMessage(message)
+   if resetCondition:
+      notifications[key] = False
 
 # Reads the value of a register at the given address
 def readRegister(address):

@@ -90,7 +90,7 @@ export default class LineGraph {
 
             if (isNaN(currentValue)) continue;
             const x = i * stepSize;
-            const y = height - currentValue * scalingFactor;
+            const y = height - currentValue * scalingFactor - 2;
 
             if (isNaN(prevValue)) {
                ctx.beginPath();
