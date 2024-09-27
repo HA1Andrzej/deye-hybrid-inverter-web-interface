@@ -1,8 +1,8 @@
 {
    "battery": {
       "capacity": 14336,
-      "dischargeLimit": { "soc": 0.15, "register": 109, "maxCurrent": 180 },
-      "chargeLimit": { "soc": 0.95, "register": 108, "maxCurrent": 180 }
+      "dischargeLimit": { "soc": 0.1, "register": 109, "maxCurrent": 180 },
+      "chargeLimit": { "soc": 0.9, "register": 108, "maxCurrent": 180 }
    },
    "telegram": {
       "enabled": true,
@@ -32,6 +32,6 @@
       "prefix": "192.168.4"
    },
    "costPerKwh": 0.35,
-   "earningsPerKwh": 0.08,
-   "totalSystemCost": 9000
+   "earningsPerKwh": 0.0803,
+   "totalSystemCost": 9700
 }
