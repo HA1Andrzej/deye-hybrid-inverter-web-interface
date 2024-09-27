@@ -81,6 +81,7 @@ export default class LineGraph {
 
       const drawCurve = (values, color, scalingFactor) => {
          const stepSize = width / (values.length - 1);
+         const yOffset = -2;
 
          let pathStartX = 0;
          for (let i = 0; i < values.length; i++) {
@@ -90,7 +91,7 @@ export default class LineGraph {
 
             if (isNaN(currentValue)) continue;
             const x = i * stepSize;
-            const y = height - currentValue * scalingFactor - 2;
+            const y = height - currentValue * scalingFactor + yOffset;
 
             if (isNaN(prevValue)) {
                ctx.beginPath();
@@ -112,7 +113,7 @@ export default class LineGraph {
                continue;
             }
             const nextX = (i + 1) * stepSize;
-            const nextY = height - nextValue * scalingFactor;
+            const nextY = height - nextValue * scalingFactor + yOffset;
             const cpx = (x + nextX) / 2;
             const cpy = (y + nextY) / 2;
             ctx.quadraticCurveTo(x, y, cpx, cpy);
