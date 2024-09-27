@@ -110,7 +110,7 @@ def readLiveValues(buffer):
       if registers[name]["isTwosComplement"] and val > 32767: val -= 65536
       buffer[name] = val;
    buffer["timestamp"] = int(time.time()*1000)
-   buffer["p_load"] = buffer.get("p_inverter", 0) + buffer.get("p_grid", 0);
+   # buffer["p_load"] = buffer.get("p_inverter", 0) + buffer.get("p_grid", 0);
    buffer["p_sun"] = buffer.get("p_string1", 0) + buffer.get("p_string2", 0) + buffer.get("p_gen", 0)
    buffer["p_losses"] = buffer.get("p_sun", 0) + buffer.get("p_batt", 0) + buffer.get("p_grid", 0) - buffer.get("p_load", 0)
 
