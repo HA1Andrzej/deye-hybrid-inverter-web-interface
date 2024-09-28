@@ -122,7 +122,7 @@ def manageBattery(buffer):
    if battSoC <= minSoC:
       batteryRecoverMode = True
       writeRegister(dischargeRegister, 0)
-   if batteryRecoverMode and battSoC >= recoverSoC:
+   if batteryRecoverMode and battSoC > recoverSoC:
       batteryRecoverMode = False
       writeRegister(dischargeRegister, dischargeCurrent)
    if battSoC >= maxSoC:
