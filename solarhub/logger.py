@@ -106,18 +106,29 @@ def readLiveValues(buffer):
    buffer["p_losses"] = buffer.get("p_sun", 0) + buffer.get("p_batt", 0) + buffer.get("p_grid", 0) - buffer.get("p_load", 0)
 
 # Check Data, Perform Actions and Send Warning Messages
+batteryRecoverMode = False;
 def manageBattery(buffer):
+   global batteryRecoverMode
    battSoC = buffer.get("batt_soc", 0)
-   maxSoC = 100*config["battery"]["chargeLimit"]["soc"]
-   chargeCurrent = config["battery"]["chargeLimit"]["maxCurrent"]
-   minSoC = 100*config["battery"]["dischargeLimit"]["soc"]
-   dischargeCurrent = config["battery"]["dischargeLimit"]["maxCurrent"]
+   maxSoC = 100*config["battery"]["charge"]["limit"]
+   chargeCurrent = config["battery"]["charge"]["maxCurrent"]
+   chargeRegister = config["battery"]["charge"]["register"]
+   dischargeRegister = config["battery"]["discharge"]["register"]
+   minSoC = 100*config["battery"]["discharge"]["limit"]
+   dischargeCurrent = config["battery"]["discharge"]["maxCurrent"]
+   recoverSoC = 100*config["battery"]["discharge"]["recover"]
 
    # Limit Battery SoC
-   maxDischargeCurrent = 0 if battSoC <= minSoC else dischargeCurrent
-   writeRegister(config["battery"]["dischargeLimit"]["register"], maxDischargeCurrent)
-   maxChargeCurrent = 0 if battSoC >= maxSoC else chargeCurrent
-   writeRegister(config["battery"]["chargeLimit"]["register"], maxChargeCurrent)
+   if battSoC <= minSoC:
+      batteryRecoverMode = True
+      writeRegister(dischargeRegister, 0)
+   if batteryRecoverMode and battSoC >= recoverSoC:
+      batteryRecoverMode = False
+      writeRegister(dischargeRegister, dischargeCurrent)
+   if battSoC >= maxSoC:
+      writeRegister(chargeRegister, 0)
+   else:
+      writeRegister(chargeRegister, chargeCurrent)
 
    # Send Telegram Messages
    sendOneTimeMessage("⚠️ Batterie bald leer", battSoC <= minSoC+10, battSoC > minSoC+20)

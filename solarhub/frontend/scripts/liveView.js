@@ -34,8 +34,9 @@ export async function build(mainContainer) {
    batterySocBar.setColor({ r: 0, g: 210, b: 140 });
    batterySocBar.setUnit("%");
    batterySocBar.setMax(100);
-   batterySocBar.addMarker(100 * constants.battery.dischargeLimit.soc);
-   batterySocBar.addMarker(100 * constants.battery.chargeLimit.soc);
+   batterySocBar.addMarker(100 * constants.battery.discharge.limit);
+   batterySocBar.addMarker(100 * constants.battery.charge.limit);
+   // batterySocBar.addMarker(100 * constants.battery.discharge.recover);
    batterySocBar.container.appendTo(liveContainer);
 
    gridPowerBar.setUnit("Watt");
@@ -66,7 +67,7 @@ function updateLiveData() {
       sunPowerBar.setValue(data.p_sun);
       loadPowerBar.setValue(data.p_load);
       batterySocBar.setValue(data.batt_soc);
-      if (data.batt_soc >= constants.battery.chargeLimit.soc * 100) {
+      if (data.batt_soc >= 100 * constants.battery.charge.limit) {
          batterySocBar.setInfoText("Batterie voll");
       } else {
          const power = -data.p_batt;

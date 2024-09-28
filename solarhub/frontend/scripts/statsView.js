@@ -455,8 +455,8 @@ barGraph.elementClicked = (data) => {
       lineGraph.data.sun.values.push(cnt == 0 ? undefined : sunPower / cnt);
       lineGraph.data.load.values.push(cnt == 0 ? undefined : loadPower / cnt);
       lineGraph.data.battSoC.values.push(cnt == 0 ? undefined : battSoC / cnt);
-      lineGraph.data.battLimitLower.values.push(100 * constants.battery.dischargeLimit.soc);
-      lineGraph.data.battLimitUpper.values.push(100 * constants.battery.chargeLimit.soc);
+      lineGraph.data.battLimitLower.values.push(100 * constants.battery.discharge.limit);
+      lineGraph.data.battLimitUpper.values.push(100 * constants.battery.charge.limit);
       lineGraph.data.gridIn.values.push(cnt == 0 ? undefined : gridInPower / cnt);
       lineGraph.data.gridOut.values.push(cnt == 0 ? undefined : gridOutPower / cnt);
    }
