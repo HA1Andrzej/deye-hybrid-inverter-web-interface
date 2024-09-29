@@ -36,7 +36,6 @@ export async function build(mainContainer) {
    batterySocBar.setMax(100);
    batterySocBar.addMarker(100 * constants.battery.discharge.limit);
    batterySocBar.addMarker(100 * constants.battery.charge.limit);
-   // batterySocBar.addMarker(100 * constants.battery.discharge.recover);
    batterySocBar.container.appendTo(liveContainer);
 
    gridPowerBar.setUnit("Watt");
@@ -83,11 +82,11 @@ function updateLiveData() {
       }
       gridPowerBar.setValue(Math.abs(data.p_grid));
       if (data.p_grid <= 0) {
-         gridPowerBar.setIcon("grid_in.png");
+         gridPowerBar.setIcon("grid_export.png");
          gridPowerBar.setColor({ r: 0, g: 176, b: 155 });
          gridPowerBar.setInfoText(`+${constants.earningsPerKwh.toEuroString()} / kWh`);
       } else {
-         gridPowerBar.setIcon("grid_out.png");
+         gridPowerBar.setIcon("grid_import.png");
          gridPowerBar.setColor({ r: 255, g: 44, b: 133 });
          gridPowerBar.setInfoText(`-${constants.costPerKwh.toEuroString()} / kWh`);
       }

@@ -23,7 +23,7 @@ def addRowToTable(tableName, dict):
    existing_columns = {info[1] for info in cursor.fetchall()}
    for key in dict.keys():
       if key not in existing_columns:
-         cursor.execute(f"ALTER TABLE {tableName} ADD COLUMN {key} INTEGER DEFAULT 0")
+         cursor.execute(f"ALTER TABLE {tableName} ADD COLUMN {key} INTEGER DEFAULT NULL")
    cursor.execute(f"INSERT INTO {tableName} ({columns}) VALUES ({placeholders})", values)
 
 # Empties Table

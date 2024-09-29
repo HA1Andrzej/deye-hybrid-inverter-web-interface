@@ -83,6 +83,8 @@ export async function getRawData(from, to, blockLength) {
          AVG(p_load) AS p_load,
          AVG(p_losses) AS p_losses,
          AVG(p_grid) AS p_grid,
+         AVG(p_grid_import) AS p_grid_import,
+         AVG(p_grid_export) AS p_grid_export,
          AVG(p_inverter) AS p_inverter,
          AVG(p_batt) AS p_batt
       FROM

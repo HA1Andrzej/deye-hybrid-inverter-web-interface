@@ -48,8 +48,8 @@ export function build(mainContainer) {
       battSoC: { name: "Batteriestand", color: { r: 0, g: 210, b: 140, a: 1 }, enabled: false, scalingGroup: 1, showInHover: true, unit: "%", values: [] },
       battLimitLower: { name: "MaxSoC", color: { r: 0, g: 210, b: 140, a: 0.3 }, enabled: false, scalingGroup: 1, showInHover: false, values: [] },
       battLimitUpper: { name: "MinSoC", color: { r: 0, g: 210, b: 140, a: 0.3 }, enabled: false, scalingGroup: 1, showInHover: false, values: [] },
-      gridOut: { name: "Netzimport", color: { r: 255, g: 44, b: 133, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
-      gridIn: { name: "Netzexport", color: { r: 0, g: 176, b: 155, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+      gridImport: { name: "Netzimport", color: { r: 255, g: 44, b: 133, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
+      gridExport: { name: "Netzexport", color: { r: 0, g: 176, b: 155, a: 1 }, enabled: false, scalingGroup: 0, showInHover: true, unit: "W", values: [] },
    };
 }
 
@@ -95,7 +95,7 @@ function buildGraphCheckBoxes() {
       { name: "Produktion", keys: ["sun"], initiallyChecked: true },
       { name: "Verbrauch", keys: ["load"], initiallyChecked: true },
       { name: "Batterie", keys: ["battSoC", "battLimitUpper", "battLimitLower"], initiallyChecked: false },
-      { name: "Netz", keys: ["gridIn", "gridOut"], initiallyChecked: false },
+      { name: "Netz", keys: ["gridImport", "gridExport"], initiallyChecked: false },
    ];
    for (let checkBox of checkBoxes) {
       const checkBoxContainer = DOM.create("div").setStyle({ display: "flex", alignItems: "center", padding: "14px" }).appendTo(container);
@@ -118,18 +118,18 @@ function buildGraphCheckBoxes() {
 // Builds the Grid Ratio Bar UI
 function buildGridRatioBar() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
-   container.append(buildBigTitle("grid_in.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
+   container.append(buildBigTitle("grid_export.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
    const ratioContainer = DOM.create("div#ratioContainer").appendTo(container);
 
    const valuesContainer = DOM.create("div#ratioValuesContainer").appendTo(ratioContainer);
    valuesContainer.append(
-      DOM.create("img.icon [src=/assets/images/grid_in.png]").setStyle({ margin: "0px", marginRight: "15px" }),
-      DOM.create("t.value#gridSoldValue"),
+      DOM.create("img.icon [src=/assets/images/grid_export.png]").setStyle({ margin: "0px", marginRight: "15px" }),
+      DOM.create("t.value#gridExportValue"),
       DOM.create("t.unit").setText("kWh verkauft"),
       DOM.create("div").setStyle({ flexGrow: 1 }),
-      DOM.create("t.value#gridBoughtValue"),
+      DOM.create("t.value#gridImportValue"),
       DOM.create("t.unit").setText("kWh eingekauft"),
-      DOM.create("img.icon [src=/assets/images/grid_out.png]").setStyle({ margin: "0px", marginLeft: "15px" }),
+      DOM.create("img.icon [src=/assets/images/grid_import.png]").setStyle({ margin: "0px", marginLeft: "15px" }),
    );
 
    const barContainer = DOM.create("div#ratioBarContainer").appendTo(ratioContainer);
@@ -137,10 +137,10 @@ function buildGridRatioBar() {
 
    const costContainer = DOM.create("div#ratioCostContainer").appendTo(ratioContainer);
    const costBoxIn = DOM.create("div.costBoxGreen").appendTo(costContainer);
-   DOM.create("t.costBoxValue#gridSoldCostValue").appendTo(costBoxIn);
+   DOM.create("t.costBoxValue#gridExportCostValue").appendTo(costBoxIn);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(costContainer);
    const costBoxOut = DOM.create("div.costBoxRed").appendTo(costContainer);
-   DOM.create("t.costBoxValue#gridBoughtCostValue").appendTo(costBoxOut);
+   DOM.create("t.costBoxValue#gridImportCostValue").appendTo(costBoxOut);
    return container;
 }
 
@@ -436,8 +436,8 @@ barGraph.elementClicked = (data) => {
       let sunPower = 0;
       let loadPower = 0;
       let battSoC = 0;
-      let gridInPower = 0;
-      let gridOutPower = 0;
+      let gridExportPower = 0;
+      let gridImportPower = 0;
       let cnt = 0;
       for (let j = prevEnd; j < data.values.length; j++) {
          const timestamp = data.values[j].timestamp_start;
@@ -446,8 +446,8 @@ barGraph.elementClicked = (data) => {
             sunPower += data.values[j].p_sun;
             loadPower += Math.max(0, data.values[j].p_load);
             battSoC += data.values[j].batt_soc;
-            gridInPower += Math.abs(Math.min(0, data.values[j].p_grid));
-            gridOutPower += Math.max(0, data.values[j].p_grid);
+            gridExportPower += data.values[j].p_grid_export ?? Math.abs(Math.min(0, data.values[j].p_grid));
+            gridImportPower += data.values[j].p_grid_import ?? Math.max(0, data.values[j].p_grid);
             cnt++;
             prevEnd = j;
          }
@@ -457,8 +457,8 @@ barGraph.elementClicked = (data) => {
       lineGraph.data.battSoC.values.push(cnt == 0 ? undefined : battSoC / cnt);
       lineGraph.data.battLimitLower.values.push(100 * constants.battery.discharge.limit);
       lineGraph.data.battLimitUpper.values.push(100 * constants.battery.charge.limit);
-      lineGraph.data.gridIn.values.push(cnt == 0 ? undefined : gridInPower / cnt);
-      lineGraph.data.gridOut.values.push(cnt == 0 ? undefined : gridOutPower / cnt);
+      lineGraph.data.gridExport.values.push(cnt == 0 ? undefined : gridExportPower / cnt);
+      lineGraph.data.gridImport.values.push(cnt == 0 ? undefined : gridImportPower / cnt);
    }
    lineGraph.draw();
 };
@@ -485,30 +485,30 @@ function processStatistics(data) {
    });
 
    // Grid Bar
-   const gridBoughtEnergy =
+   const gridImportEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.max(a.p_grid, 0);
+         const power = a.p_grid_import ?? Math.max(a.p_grid, 0);
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
-   const gridSoldEnergy =
+   const gridExportEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = Math.abs(Math.min(a.p_grid, 0));
+         const power = a.p_grid_export ?? Math.abs(Math.min(a.p_grid, 0));
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
-   const gridBoughtCost = (gridBoughtEnergy / 1000) * constants.costPerKwh;
-   const gridSoldCost = (gridSoldEnergy / 1000) * constants.earningsPerKwh;
-   DOM.select("gridSoldCostValue").setText("+" + gridSoldCost.toEuroString());
-   DOM.select("gridBoughtCostValue").setText("-" + gridBoughtCost.toEuroString());
-   DOM.select("gridSoldValue").setText((gridSoldEnergy / 1000).toTwoDecimalString(50));
-   DOM.select("gridBoughtValue").setText((gridBoughtEnergy / 1000).toTwoDecimalString(50));
-   const totalGridEnergy = gridBoughtEnergy + gridSoldEnergy;
-   const ratio = totalGridEnergy == 0 ? 0.5 : gridSoldEnergy / totalGridEnergy;
+   const gridImportCost = (gridImportEnergy / 1000) * constants.costPerKwh;
+   const gridExportCost = (gridExportEnergy / 1000) * constants.earningsPerKwh;
+   DOM.select("gridExportCostValue").setText("+" + gridExportCost.toEuroString());
+   DOM.select("gridImportCostValue").setText("-" + gridImportCost.toEuroString());
+   DOM.select("gridExportValue").setText((gridExportEnergy / 1000).toTwoDecimalString(50));
+   DOM.select("gridImportValue").setText((gridImportEnergy / 1000).toTwoDecimalString(50));
+   const totalGridEnergy = gridImportEnergy + gridExportEnergy;
+   const ratio = totalGridEnergy == 0 ? 0.5 : gridExportEnergy / totalGridEnergy;
    DOM.select("ratioBarGreen").setStyle({ width: `${Math.round(ratio * 100)}%` });
 
    // Finances
-   const actualCost = gridSoldCost - gridBoughtCost;
+   const actualCost = gridExportCost - gridImportCost;
    const marketPriceOfEnergyUsed = Math.round((data.loadEnergy / 1000) * constants.costPerKwh * 100) / 100;
    const savedMoney = actualCost + marketPriceOfEnergyUsed;
    DOM.select("costWithoutPvValue").setText(`-${marketPriceOfEnergyUsed.toEuroString()}`);
@@ -536,7 +536,7 @@ function processStatistics(data) {
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    energyMixPieChart.setData([
-      { value: gridBoughtEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzbezug" },
+      { value: gridImportEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzbezug" },
       { value: directSunUseEnergy, color: { r: 255, g: 199, b: 0 }, description: "Sonne Direkt" },
       { value: batteryUseEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterie" },
    ]);
@@ -549,15 +549,15 @@ function processStatistics(data) {
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    energyDistributionPieChart.setData([
-      { value: gridSoldEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzeinspeisung" },
+      { value: gridExportEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzeinspeisung" },
       { value: directSunUseEnergy, color: { r: 48, g: 150, b: 255 }, description: "Direktverbrauch" },
       { value: batteryChargeEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterieladung" },
    ]);
 
    // Autarkiegrad & Eigenverbrauch
-   const selfSufficiencyValue = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / (gridBoughtEnergy + directSunUseEnergy + batteryUseEnergy));
+   const selfSufficiencyValue = Math.round((100 * (directSunUseEnergy + batteryUseEnergy)) / (gridImportEnergy + directSunUseEnergy + batteryUseEnergy));
    selfSufficiencyBar.setValue(selfSufficiencyValue);
-   const selfUseValue = Math.round((100 * (directSunUseEnergy + batteryChargeEnergy)) / (gridSoldEnergy + directSunUseEnergy + batteryChargeEnergy));
+   const selfUseValue = Math.round((100 * (directSunUseEnergy + batteryChargeEnergy)) / (gridExportEnergy + directSunUseEnergy + batteryChargeEnergy));
    selfUseBar.setValue(selfUseValue);
 
    // CO2 View

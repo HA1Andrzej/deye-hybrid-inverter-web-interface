@@ -104,6 +104,8 @@ def readLiveValues(buffer):
    buffer["timestamp"] = int(time.time()*1000)
    buffer["p_sun"] = max(0, buffer.get("p_string1", 0) + buffer.get("p_string2", 0) + buffer.get("p_gen", 0))
    buffer["p_losses"] = buffer.get("p_sun", 0) + buffer.get("p_batt", 0) + buffer.get("p_grid", 0) - buffer.get("p_load", 0)
+   buffer["p_grid_export"] = abs(min(0, buffer.get("p_grid", 0)))
+   buffer["p_grid_import"] = max(0, buffer.get("p_grid", 0))
 
 # Check Data, Perform Actions and Send Warning Messages
 batteryRecoverMode = False;
