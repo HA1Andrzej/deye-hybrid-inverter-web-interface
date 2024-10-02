@@ -44,7 +44,7 @@ export async function build(mainContainer) {
    DOM.create("div").setStyle({ flexGrow: 2 }).appendTo(liveContainer);
 
    updateLiveData();
-   setInterval(updateLiveData, 1000);
+   setInterval(updateLiveData, 500);
    updateMaxValues();
    setInterval(updateMaxValues, 60 * 1000);
 }

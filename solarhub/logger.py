@@ -71,7 +71,7 @@ def start():
 
       # Save all changes and wait
       conn.commit()
-      time.sleep(0.7)
+      time.sleep(0.8)
 
 # Connect to RS485-Adapter
 def connectToSerialUsbAdapter():
