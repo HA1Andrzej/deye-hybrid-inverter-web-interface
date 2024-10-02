@@ -1,7 +1,7 @@
 {
    "battery": {
       "capacity": 14336,
-      "discharge": { "limit": 0.1, "recover": 0.4, "register": 109, "maxCurrent": 180 },
+      "discharge": { "limit": 0.1, "recover": 0, "register": 109, "maxCurrent": 180 },
       "charge": { "limit": 0.9, "register": 108, "maxCurrent": 180 }
    },
    "telegram": {

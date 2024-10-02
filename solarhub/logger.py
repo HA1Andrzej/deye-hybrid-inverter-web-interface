@@ -108,9 +108,7 @@ def readLiveValues(buffer):
    buffer["p_grid_import"] = max(0, buffer.get("p_grid", 0))
 
 # Check Data, Perform Actions and Send Warning Messages
-batteryRecoverMode = False;
 def manageBattery(buffer):
-   global batteryRecoverMode
    battSoC = buffer.get("batt_soc", 0)
    maxSoC = 100*config["battery"]["charge"]["limit"]
    chargeCurrent = config["battery"]["charge"]["maxCurrent"]
@@ -122,10 +120,8 @@ def manageBattery(buffer):
 
    # Limit Battery SoC
    if battSoC <= minSoC:
-      batteryRecoverMode = True
       writeRegister(dischargeRegister, 0)
-   if batteryRecoverMode and battSoC > recoverSoC:
-      batteryRecoverMode = False
+   elif battSoC > recoverSoC:
       writeRegister(dischargeRegister, dischargeCurrent)
    if battSoC >= maxSoC:
       writeRegister(chargeRegister, 0)
