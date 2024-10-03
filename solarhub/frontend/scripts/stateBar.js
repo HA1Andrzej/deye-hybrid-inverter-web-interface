@@ -43,7 +43,7 @@ export default class StateBar {
    }
    setColor(color) {
       this.barOuter.setStyle({
-         backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.15)`,
+         backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.18)`,
       });
       this.barInner.setStyle({
          backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
@@ -86,86 +86,3 @@ export default class StateBar {
       });
    }
 }
-
-// Styling
-const style = document.createElement("style");
-style.innerHTML = `
-   .stateBarContainer {
-      width: 100%;
-      max-width: 550px;
-      margin: 25px 0px;
-      transition: 0.3s;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-   }
-
-   .stateBarIconTextContainer {
-      display: flex;
-      align-items: center;
-   }
-
-   .stateBarTextContainer {
-      width: 100%;
-      display: flex;
-      align-items: center;
-   }
-
-   .stateBarIcon {
-      width: 25px;
-      height: 25px;
-      margin-right: 15px;
-      object-fit: contain;
-   }
-
-   .stateBarValue {
-      font-family: boldest;
-      font-size: 130%;
-   }
-
-   .stateBarUnit {
-      opacity: 0.26;
-      margin-left: 7px;
-      font-family: bold;
-      margin-bottom: -5px;
-      font-size: 90%;
-   }
-
-   .stateBarInfoText {
-      float: right;
-      margin-right: 15px;
-      opacity: 0.26;
-      margin-bottom: -5px;
-      text-align: right;
-      font-size: 90%;
-   }
-
-   .stateBarOuter {
-      width: 100%;
-      height: 10px;
-      border-radius: 30px;
-      margin-top: 15px;
-      box-sizing: border-box;
-      z-index: 2;
-   }
-
-   .stateBarInner {
-      width: 0%;
-      height: 20px;
-      min-width: 0px;
-      margin-top: -15px;
-      border-radius: 30px;
-      transition: 0.3s;
-      z-index: 3;
-   }
-   .stateBarContainer .marker {
-      width: 3px;
-      border-radius: 10px;
-      height: 30px;
-      bottom: -5px;
-      background-color: var(--textColor);
-      position: absolute;
-      z-index: 4;
-   }
-`;
-document.head.appendChild(style);

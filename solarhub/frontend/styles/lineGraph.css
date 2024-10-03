@@ -1,0 +1,100 @@
+.lineGraphContainer {
+   margin-top: 0px;
+   width: 100%;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   position: relative;
+}
+
+.lineGraphSubTitle {
+   margin-top: 3px;
+   opacity: 0.26;
+}
+
+.lineGraphCanvas {
+   width: 100%;
+   height: 230px;
+   margin-top: 0px;
+   border-radius: 8px;
+}
+
+.lineGraphTickLineContainer {
+   width: 100%;
+   height: 10px;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   box-sizing: border-box;
+   border-top: 3px solid rgba(0, 0, 0, 0.08);
+   border-top-left-radius: 3px;
+   border-top-right-radius: 3px;
+   justify-content: space-between;
+}
+
+.lineGraphTickLine {
+   width: 3px;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.08);
+   border-bottom-left-radius: 5px;
+   border-bottom-right-radius: 5px;
+}
+
+.lineGraphLabelContainer {
+   width: 100%;
+   height: 30px;
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   justify-content: center;
+   box-sizing: border-box;
+   padding: 0px;
+   margin: 0px;
+   margin-top: -12px;
+   justify-content: space-around;
+}
+
+.lineGraphLabel {
+   width: 10px;
+   position: relative;
+}
+.lineGraphLabel span {
+   position: absolute;
+   left: 50%;
+   transform: translateX(-50%);
+   opacity: 0.26;
+   font-size: 75%;
+   white-space: nowrap;
+   text-align: center;
+   margin-top: -10px;
+}
+#sumContainer {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin-top: 20px;
+   margin-bottom: 60px;
+}
+#hoverBox {
+   padding: 20px;
+   background-color: var(--themeColor);
+   border-radius: 16px;
+   display: flex;
+   flex-direction: column;
+   position: absolute;
+   display: none;
+   pointer-events: none;
+   z-index: 101;
+}
+#hoverLine {
+   width: 2px;
+   height: 100%;
+   top: 0px;
+   background-color: var(--textColor);
+   border-radius: 10px;
+   position: absolute;
+   display: none;
+   pointer-events: none;
+   z-index: 99;
+}

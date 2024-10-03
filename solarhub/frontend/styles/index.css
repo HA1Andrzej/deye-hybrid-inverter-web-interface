@@ -1,5 +1,9 @@
 @import url("./liveView.css");
 @import url("./statsView.css");
+@import url("./barGraph.css");
+@import url("./lineGraph.css");
+@import url("./pieChart.css");
+@import url("./stateBar.css");
 
 @font-face {
    font-family: "bold";
