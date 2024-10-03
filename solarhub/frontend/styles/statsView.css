@@ -10,7 +10,11 @@
 .tab {
    padding: 10px;
    transition: 0.3s;
-   opacity: 0.26;
+   opacity: 0.4;
+   margin: 5px;
+   background-color: rgba(128, 128, 128, 0.15);
+   padding: 10px 20px;
+   border-radius: 16px;
 }
 @media (pointer: fine) {
    .tab:hover {
@@ -22,6 +26,8 @@
 }
 .selectedTab {
    opacity: 1;
+   color: var(--themeColor);
+   background-color: var(--textColor);
 }
 
 .icon {

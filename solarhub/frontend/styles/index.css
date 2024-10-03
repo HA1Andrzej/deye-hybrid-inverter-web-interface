@@ -24,13 +24,16 @@
 
 :root {
    --borderRadius: 13px;
-   --textColor: rgb(0, 20, 40);
-   --themeColor: rgb(245, 250, 255);
+   --textColor: rgb(20, 40, 60);
+   /* --themeColor: rgb(245, 250, 255); */
+   --themeColor: rgb(240, 245, 250);
+   --foregroundColor: rgb(255, 255, 255);
    --invertValue: 0;
 
    @media (prefers-color-scheme: dark) {
       --textColor: rgba(225, 230, 235, 1);
-      --themeColor: rgba(20, 30, 40, 1);
+      --themeColor: rgba(10, 20, 30, 1);
+      --foregroundColor: rgba(20, 32, 45, 1);
       --invertValue: 1;
    }
 }
@@ -94,7 +97,6 @@ body {
    width: 100px;
    flex-grow: 1;
    height: 100vh;
-   border-radius: 20px;
    box-sizing: border-box;
    overflow-y: scroll;
    display: flex;
@@ -103,25 +105,39 @@ body {
    padding: 80px;
    transition: 0.3s;
    background-color: var(--themeColor);
-   border-radius: 24px;
+   border-radius: 35px;
+   z-index: 1;
+   position: relative;
+}
+
+.sideContainer::before {
+   content: "";
+   width: 100%;
+   height: 100%;
+   position: absolute;
+   left: 0px;
+   top: 0px;
+   background-color: var(--themeColor);
+   z-index: 9999;
+   transition: 0.3s;
+   opacity: 0;
+   pointer-events: none;
+}
+.sideContainer.waiting::before {
+   opacity: 0.85;
+   pointer-events: all;
 }
 
 #liveContainer {
-   max-width: 560px;
-}
-
-#divider {
-   width: 7px;
-   height: 70vh;
-   background-color: var(--textColor);
-   opacity: 0.08;
-   border-radius: 20px;
-   transition: 0.3s;
-}
-
-.waiting {
-   opacity: 0.26;
-   pointer-events: none;
+   height: auto;
+   background-color: var(--foregroundColor);
+   margin: 40px;
+   margin-right: 0px;
+   padding: 40px 70px;
+   padding-top: 45px;
+   box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.05);
+   max-width: 480px;
+   z-index: 2;
 }
 
 #loadingContainer {
@@ -180,9 +196,10 @@ body {
    }
    #liveContainer {
       max-width: 100%;
-   }
-   #divider {
-      display: none;
+      background-color: inherit;
+      margin: 0px;
+      padding: 20px;
+      box-shadow: none;
    }
 }
 

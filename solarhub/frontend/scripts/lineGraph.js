@@ -179,18 +179,17 @@ export default class LineGraph {
             );
          });
 
-         this.hoverBox.setStyle({ display: "flex" });
-         this.hoverLine.setStyle({ display: "flex", left: x + "px" });
-         setTimeout(() => {
-            const hoverBoxWidth = this.hoverBox.getWidth();
-            const adjustedX = x - hoverBoxWidth * (x / width);
-            const hoverBoxHeight = this.hoverBox.getHeight();
-            const adjustedY = -hoverBoxHeight + 60;
-            this.hoverBox.setStyle({ left: adjustedX + "px", top: adjustedY + "px" });
-         }, 10);
+         const hoverBoxWidth = this.hoverBox.getWidth();
+         const adjustedX = x - hoverBoxWidth * (x / width);
+         const hoverBoxHeight = this.hoverBox.getHeight();
+         const adjustedY = -hoverBoxHeight + 60;
+         this.hoverBox.setStyle({ opacity: "1", left: adjustedX + "px", top: adjustedY + "px" });
+         this.hoverLine.setStyle({ opacity: "1", left: x + "px" });
       } else {
-         this.hoverBox.setStyle({ display: "none" });
-         this.hoverLine.setStyle({ display: "none" });
+         setTimeout(() => {
+            this.hoverBox.setStyle({ opacity: "0" });
+            this.hoverLine.setStyle({ opacity: "0" });
+         }, 10);
       }
    }
 }

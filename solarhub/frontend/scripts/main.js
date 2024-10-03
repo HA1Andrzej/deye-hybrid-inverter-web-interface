@@ -26,15 +26,20 @@ setTimeout(() => {
 let displayMode = JSON.parse(localStorage.getItem("displayMode")) ?? 0;
 setTimeout(() => {
    setDisplayMode(displayMode);
-   DOM.select("divider").onClick(() => {
-      displayMode = mod(displayMode + 1, 3);
+   DOM.select("dateTimeContainer").onClick(() => {
+      displayMode = mod(displayMode + 1, 2);
       setDisplayMode(displayMode);
       localStorage.setItem("displayMode", displayMode);
    });
 }, 1000);
 function setDisplayMode(mode) {
    if (mode == 0) {
-      DOM.select("liveContainer").setStyle({ maxWidth: "" });
+      DOM.select("liveContainer").setStyle({
+         maxWidth: "",
+         margin: "",
+         height: "",
+         backgroundColor: "",
+      });
       divider.setStyle({
          backgroundColor: "",
          opacity: "",
@@ -47,15 +52,12 @@ function setDisplayMode(mode) {
    }
 
    if (mode == 1) {
-      divider.setStyle({
-         backgroundColor: "black",
-         width: "10px",
+      DOM.select("liveContainer").setStyle({
+         maxWidth: "calc(50% - 175px)",
+         margin: "0px",
+         height: "100vh",
+         backgroundColor: "var(--themeColor)",
       });
-      setSafariUIColor("#000000");
-   }
-
-   if (mode == 2) {
-      DOM.select("liveContainer").setStyle({ maxWidth: "calc(50% - 175px)" });
       divider.setStyle({
          backgroundColor: "black",
          opacity: "1",

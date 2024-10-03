@@ -15,7 +15,7 @@ const gridPowerBar = new StateBar();
 export async function build(mainContainer) {
    liveContainer.appendTo(mainContainer);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(liveContainer);
-   buildWifiButton();
+   buildSettingsButton();
 
    DOM.create("div#dateTimeContainer").append(timeTextView).append(dateTextView).appendTo(liveContainer);
    DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(liveContainer);
@@ -117,9 +117,9 @@ function updateMaxValues() {
    }, 50);
 }
 
-// Builds the Wifi button
-function buildWifiButton() {
-   DOM.create("div#wifiButton")
+// Builds the Settings button
+function buildSettingsButton() {
+   DOM.create("div#settingsButton")
       .appendTo(liveContainer)
       .onClick(async () => {
          let networks;

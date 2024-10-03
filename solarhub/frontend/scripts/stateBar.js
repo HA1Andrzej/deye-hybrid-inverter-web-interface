@@ -43,7 +43,8 @@ export default class StateBar {
    }
    setColor(color) {
       this.barOuter.setStyle({
-         backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.18)`,
+         // backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.18)`,
+         backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
       });
       this.barInner.setStyle({
          backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
