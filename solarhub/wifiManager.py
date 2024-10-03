@@ -143,7 +143,7 @@ def stopAP():
 def getAvailableNetworks():
    networks = []
    try:
-      result = subprocess.run(['nmcli', '-f', 'SSID,RATE,SIGNAL', 'dev', 'wifi'], capture_output=True, text=True)
+      result = subprocess.run(['sudo', 'nmcli', '-f', 'SSID,RATE,SIGNAL', 'dev', 'wifi'], capture_output=True, text=True)
       lines = result.stdout.split('\n')
       for line in lines[1:]:
          if line:
@@ -163,20 +163,22 @@ def getAvailableNetworks():
 
 def connectNewNetwork(ssid, password, staticIp):
    # Lösche alle vorherigen Verbindungen
-   connections = subprocess.run(['nmcli', '-t', '-f', 'NAME,UUID', 'connection', 'show'], capture_output=True, text=True).stdout
+   connections = subprocess.run(['sudo', 'nmcli', '-t', '-f', 'NAME,UUID', 'connection', 'show'], capture_output=True, text=True).stdout
    for line in connections.splitlines():
       name, uuid = line.split(':')
-      try: subprocess.run(['nmcli', 'connection', 'delete', 'uuid', uuid], check=True)
+      try: subprocess.run(['sudo', 'nmcli', 'connection', 'delete', 'uuid', uuid], check=True)
       except subprocess.CalledProcessError: pass
 
    # Neue WLAN-Verbindung hinzufügen
    try:
-      subprocess.run(['nmcli', 'device', 'wifi', 'connect', ssid, 'password', password], check=True)
+      subprocess.run(['sudo', 'nmcli', 'device', 'wifi', 'connect', ssid, 'password', password], check=True)
       print(f"Verbunden mit dem Netzwerk {ssid}")
    except subprocess.CalledProcessError: pass
 
    # Statische IP setzen
    if re.match(r"^\d{1,3}(\.\d{1,3}){3}$", staticIp):
+      time.sleep(3)
+      connections = subprocess.run(['sudo', 'nmcli', '-t', '-f', 'NAME,UUID', 'connection', 'show'], capture_output=True, text=True).stdout
       for line in connections.splitlines():
          name, uuid = line.split(':')
          try: subprocess.run(['sudo', 'nmcli', 'connection', 'modify', uuid,

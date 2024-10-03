@@ -67,6 +67,8 @@ function updateLiveData() {
       batterySocBar.setValue(data.batt_soc);
       if (data.batt_soc >= 100 * constants.battery.charge.limit) {
          batterySocBar.setInfoText("Batterie voll");
+      } else if (data.batt_soc <= 100 * constants.battery.discharge.limit) {
+         batterySocBar.setInfoText("Batterie leer");
       } else {
          const power = -data.p_batt;
          const powerString = (power > 0 ? "+" : "") + power.toLocaleString("de-DE");
