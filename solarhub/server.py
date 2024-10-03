@@ -26,12 +26,20 @@ class CustomHandler(SimpleHTTPRequestHandler):
    def log_message(self, format, *args):
       pass
 
+   # Handle GET requests for API calls
+   def do_GET(self):
+      if self.path.startswith('/api/'):
+         name = self.path[len('/api/'):]
+         handleApiRequest(self, name)
+      else:
+         super().do_GET()
+
    # Handle Post Requests
    def do_POST(self):
       content_length = int(self.headers['Content-Length'])
       post_data = self.rfile.read(content_length).decode('utf-8').strip('"')
       action = self.path.lstrip('/')
-      handleRequest(self, action, post_data)
+      handlePostRequest(self, action, post_data)
 
    # Handle End Headers
    def end_headers(self):
@@ -40,16 +48,23 @@ class CustomHandler(SimpleHTTPRequestHandler):
        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
        SimpleHTTPRequestHandler.end_headers(self)
 
-def handleRequest(httpHandler, action, data):
+   # Sends a plain text response to client
+   def send_plain_response(self, text):
+      try:
+         self.send_response(200)
+         self.send_header('Content-type', 'text/plain')
+         self.end_headers()
+         self.wfile.write(str(text).encode('utf-8'))
+      except Exception as e:
+         self.send_error(500, f"Internal Server Error: {str(e)}")
+
+# Handle Post Requests, mainly from frontend
+def handlePostRequest(httpHandler, action, data):
    #print(f"Action: {action}, Params: {data}")
    res = ""
 
    if action == "dbQuery":
       res = dbManager.query(data)
-
-   if action == "getWifiNetworks":
-      networks = wifiManager.getAvailableNetworks()
-      res = json.dumps({"success": True, "data": networks})
 
    if action == "updateWifi":
       ssid = json.loads(data).get("ssid")
@@ -58,15 +73,39 @@ def handleRequest(httpHandler, action, data):
       res = json.dumps({"success": True, "data": data})
       wifiManager.connectNewNetwork(ssid, password, staticIp)
 
-   if action == "getConfig":
-      with open('config.json', 'r') as config_file:
-         config_data = json.load(config_file)
-      res = json.dumps({"success": True, "data": config_data})
-
    answer = {"answer": res}
    httpHandler.send_response(200)
    httpHandler.end_headers()
    httpHandler.wfile.write(json.dumps(answer).encode('utf-8'))
+
+
+def handleApiRequest(httpHandler, name):
+   liveDataJson = dbManager.query("SELECT * FROM live")
+   liveData = json.loads(liveDataJson)
+
+   if name == "live":
+      httpHandler.send_plain_response(liveDataJson)
+   elif name == "solar_power":
+      value = liveData[0]["p_sun"]
+      httpHandler.send_plain_response(value)
+   elif name == "load_power":
+      value = liveData[0]["p_load"]
+      httpHandler.send_plain_response(value)
+   elif name == "batt_soc":
+      value = liveData[0]["batt_soc"]
+      httpHandler.send_plain_response(value)
+   elif name == "overview":
+      answer = "Die Solaranlage produziert gerade " + str(liveData[0]["p_sun"]) + " Watt, der Verbrauch liegt bei " + str(liveData[0]["p_load"]) + " Watt. Die Batterie ist zu " + str(liveData[0]["batt_soc"]) + " Prozent geladen."
+      httpHandler.send_plain_response(answer)
+   elif name == "config":
+      with open('config.json', 'r') as config_file:
+         config_data = json.load(config_file)
+      httpHandler.send_plain_response(json.dumps(config_data))
+   elif name == "wifi_networks":
+      networks = wifiManager.getAvailableNetworks()
+      httpHandler.send_plain_response(json.dumps(networks))
+   else:
+      httpHandler.send_plain_response("Invalid API Request: " + name)
 
 # -------------------------------------------
 # Start Server

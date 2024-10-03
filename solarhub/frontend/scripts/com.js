@@ -1,43 +1,39 @@
 import { constants } from "./helper.js";
 
 export async function getWifiNetworks() {
-   const res = await communicateWithServer("getWifiNetworks", JSON.stringify([]));
-   return JSON.parse(res).data;
+   return await apiCall("/api/wifi_networks", true);
+}
+
+export async function getConfig() {
+   return await apiCall("/api/config", true);
+}
+
+export async function getLiveData() {
+   const res = await apiCall("/api/live", true);
+   return res[0];
 }
 
 export async function updateWifi(ssid, password, staticIp) {
    const data = { ssid: ssid, password: password, staticip: staticIp };
-   const res = await communicateWithServer("updateWifi", JSON.stringify(data));
+   const res = await sendToServer("updateWifi", JSON.stringify(data));
    console.log(JSON.parse(res));
    return JSON.parse(res).success;
 }
 
-export async function getConfig() {
-   const res = await communicateWithServer("getConfig", JSON.stringify([]));
-   return JSON.parse(res).data;
-}
-
-export async function getLiveData() {
-   const query = "SELECT * FROM live";
-   const res = await communicateWithServer("dbQuery", query);
-   const data = JSON.parse(res);
-   return data[0];
-}
-
-export async function getPeakValues(param = "p_sun", start, end) {
+export async function getPeakValues(key = "p_sun", start, end) {
    const query = `
       SELECT
-          ${param} AS val,
+          ${key} AS val,
           timestamp
       FROM
           logs
       WHERE
           timestamp BETWEEN ${start} AND ${end}
       ORDER BY
-          ${param} DESC
+          ${key} DESC
       LIMIT 1;
    `;
-   const res = await communicateWithServer("dbQuery", query);
+   const res = await sendToServer("dbQuery", query);
    const data = JSON.parse(res);
    return data[0];
 }
@@ -66,7 +62,7 @@ export async function getOldestTimestamp() {
       FROM
          logs
    `;
-   const res = await communicateWithServer("dbQuery", query);
+   const res = await sendToServer("dbQuery", query);
    const data = JSON.parse(res);
    return data[0].oldest_timestamp;
 }
@@ -96,13 +92,13 @@ export async function getRawData(from, to, blockLength) {
       ORDER BY
          timestamp_start
    `;
-   const res = await communicateWithServer("dbQuery", query);
+   const res = await sendToServer("dbQuery", query);
    const data = JSON.parse(res);
    return data;
 }
 
 // Sends Data to the Backend and returns the answer
-async function communicateWithServer(action, data) {
+async function sendToServer(action, data) {
    return new Promise(async (resolve, _) => {
       let response = await fetch(action, {
          method: "POST",
@@ -111,4 +107,12 @@ async function communicateWithServer(action, data) {
       let obj = response.ok ? await response.json() : [];
       resolve(obj.answer);
    });
+}
+
+// Makes an API (Get) Call
+async function apiCall(name, isJson = false) {
+   const res = await fetch(name);
+   let data = await res.text();
+   if (isJson) data = JSON.parse(data);
+   return data;
 }

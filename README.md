@@ -12,12 +12,13 @@ SolarHub is a fully integrated web-based interface designed for the Deye / Sunsy
 
 1. Real-time monitoring of power generation, consumption battery status, grid imports and exports and so on.
 2. Visualization of historical data.
-3. Configurable battery charge and discharge limits to extend battery lifespan.
-4. Mobile-friendly, responsive and fool-proof design.
-5. Automatic Wi-Fi access point creation when the connection is lost, allowing users to connect the system to a new network via the web interface.
-6. Periodic database backups to a USB stick when plugged into the Raspberry Pi.
-7. Notifications about your system via Telegram Channel.
-8. Additional features planned for future updates (e.g. locales.json for adding languages, more statistics, etc)
+3. Easy Integration into HomeAssistant for Automation using the API via http endpoints (live data in JSON at `<server>/api/live` - more details soon)
+4. Configurable battery charge and discharge limits to extend battery lifespan.
+5. Mobile-friendly, responsive and fool-proof design.
+6. Automatic Wi-Fi access point creation when the connection is lost, allowing users to connect the system to a new network via the web interface.
+7. Periodic database backups to a USB stick when plugged into the Raspberry Pi.
+8. Notifications about your system via Telegram Channel.
+9. Additional features planned for future updates (e.g. locales.json for adding languages, more statistics, etc)
 
 # Prerequisites
 

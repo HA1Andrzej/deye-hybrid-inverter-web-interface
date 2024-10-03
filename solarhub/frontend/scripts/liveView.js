@@ -53,7 +53,6 @@ export async function build(mainContainer) {
 function updateLiveData() {
    getLiveData().then((data) => {
       if (!data) return;
-      console.log(data);
       const serverTime = new Date(data.timestamp);
       const hours = String(serverTime.getHours()).padStart(2, "0");
       const minutes = String(serverTime.getMinutes()).padStart(2, "0");
