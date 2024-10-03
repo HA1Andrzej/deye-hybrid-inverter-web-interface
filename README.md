@@ -1,7 +1,3 @@
-### Disclaimer
-
-_This project is currently in its early stages and is still under development. While the software is functional, it may not be entirely safe for your system, and future updates could potentially disrupt the database. This disclaimer will be removed once the project is complete and stable._
-
 # SolarHub: Web Interface for Deye Hybrid Inverter
 
 SolarHub is a fully integrated web-based interface designed for the Deye / Sunsync 3-Phase Hybrid Solar Inverter (6kW, 8kW, 10kW, 12kW). The system continuously collects and stores critical data from the inverter at a high frequency. Through the responsive web interface, users can monitor real-time information, view historical data, and analyze important statistics.
@@ -12,7 +8,7 @@ SolarHub is a fully integrated web-based interface designed for the Deye / Sunsy
 
 1. Real-time monitoring of power generation, consumption battery status, grid imports and exports and so on.
 2. Visualization of historical data.
-3. Easy Integration into HomeAssistant for Automation using the API via http endpoints (live data in JSON at `<server>/api/live` - more details soon)
+3. Easy Integration into HomeAssistant for Automation using the API via http endpoints (live data in JSON format at `<server>/api/live` - more details soon)
 4. Configurable battery charge and discharge limits to extend battery lifespan.
 5. Mobile-friendly, responsive and fool-proof design.
 6. Automatic Wi-Fi access point creation when the connection is lost, allowing users to connect the system to a new network via the web interface.
