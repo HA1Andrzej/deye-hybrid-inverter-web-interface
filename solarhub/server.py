@@ -8,6 +8,8 @@ import dbManager
 import shutil
 import threading
 import wifiManager
+import api
+from urllib.parse import urlparse, parse_qs
 
 # Extend HTTPServer to support threading
 class ThreadingHTTPServer(ThreadingMixIn, HTTPServer):
@@ -29,8 +31,12 @@ class CustomHandler(SimpleHTTPRequestHandler):
    # Handle GET requests for API calls
    def do_GET(self):
       if self.path.startswith('/api/'):
-         name = self.path[len('/api/'):]
-         handleApiRequest(self, name)
+         parsed_url = urlparse(self.path)
+         path = parsed_url.path[len('/api/'):]
+         query_params = parse_qs(parsed_url.query)
+         params = {key: value[0] if len(value) == 1 else value for key, value in query_params.items()}
+         data = api.request(path, params)
+         self.send_plain_response(data)
       else:
          super().do_GET()
 
@@ -78,34 +84,6 @@ def handlePostRequest(httpHandler, action, data):
    httpHandler.end_headers()
    httpHandler.wfile.write(json.dumps(answer).encode('utf-8'))
 
-
-def handleApiRequest(httpHandler, name):
-   liveDataJson = dbManager.query("SELECT * FROM live")
-   liveData = json.loads(liveDataJson)
-
-   if name == "live":
-      httpHandler.send_plain_response(liveDataJson)
-   elif name == "solar_power":
-      value = liveData[0]["p_sun"]
-      httpHandler.send_plain_response(value)
-   elif name == "load_power":
-      value = liveData[0]["p_load"]
-      httpHandler.send_plain_response(value)
-   elif name == "batt_soc":
-      value = liveData[0]["batt_soc"]
-      httpHandler.send_plain_response(value)
-   elif name == "overview":
-      answer = "Die Solaranlage produziert gerade " + str(liveData[0]["p_sun"]) + " Watt, der Verbrauch liegt bei " + str(liveData[0]["p_load"]) + " Watt. Die Batterie ist zu " + str(liveData[0]["batt_soc"]) + " Prozent geladen."
-      httpHandler.send_plain_response(answer)
-   elif name == "config":
-      with open('config.json', 'r') as config_file:
-         config_data = json.load(config_file)
-      httpHandler.send_plain_response(json.dumps(config_data))
-   elif name == "wifi_networks":
-      networks = wifiManager.getAvailableNetworks()
-      httpHandler.send_plain_response(json.dumps(networks))
-   else:
-      httpHandler.send_plain_response("Invalid API Request: " + name)
 
 # -------------------------------------------
 # Start Server

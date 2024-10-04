@@ -8,7 +8,7 @@ SolarHub is a fully integrated web-based interface designed for the Deye / Sunsy
 
 1. Real-time monitoring of power generation, consumption battery status, grid imports and exports and so on.
 2. Visualization of historical data.
-3. Easy Integration into HomeAssistant for Automation using the API via http endpoints (live data in JSON format at `<server>/api/live` - more details soon)
+3. Easy Integration into HomeAssistant for Automation using the API via http endpoints (live data in JSON format at `<server>/api/live/raw` - more details soon)
 4. Configurable battery charge and discharge limits to extend battery lifespan.
 5. Mobile-friendly, responsive and fool-proof design.
 6. Automatic Wi-Fi access point creation when the connection is lost, allowing users to connect the system to a new network via the web interface.

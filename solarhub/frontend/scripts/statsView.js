@@ -1,5 +1,5 @@
 import DOM from "./dom.js";
-import { getRawData, getOldestTimestamp, getPeakValues } from "./com.js";
+import { getHistoricalData, getOldestTimestamp, getPeakValues } from "./com.js";
 import { mod, getWeekNumber, constants } from "./helper.js";
 import StateBar from "./stateBar.js";
 import PieChart from "./pieChart.js";
@@ -367,7 +367,6 @@ async function tabClicked(tabId, greyOut = true) {
       if (tabId == "total") {
          start = await getOldestTimestamp();
          end = Date.now();
-         // blockLength = 24 * 60 * 60 * 1000;
          blockLength = (end - start) / 96;
          title = "Gesamtbilanz";
          subTitle = `${new Date(start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })} bis heute`;
@@ -375,7 +374,7 @@ async function tabClicked(tabId, greyOut = true) {
          lineGraphLabels = [`${numberOfDays} Tage`];
       }
       const rawDataBlockLength = Math.min(blockLength, 1 * 60 * 60 * 1000);
-      getRawData(start, end, rawDataBlockLength).then((rawData) => {
+      getHistoricalData(start, end, rawDataBlockLength).then((rawData) => {
          doneCounter++;
          const sunEnergy =
             rawData.reduce((acc, a) => {
