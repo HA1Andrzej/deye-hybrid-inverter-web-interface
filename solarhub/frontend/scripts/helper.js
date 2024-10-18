@@ -64,6 +64,21 @@ Number.prototype.toTwoDecimalString = function (decimalCutoffThreshold) {
    return res.replace(".", ",");
 };
 
+export function setDateTimeFromUnix(unixTimestamp) {
+   // Erstelle ein Datum basierend auf dem Unix-Timestamp
+   const date = new Date(unixTimestamp);
+
+   // Erstelle das Format YYYY-MM-DDTHH:MM
+   const year = date.getFullYear();
+   const month = String(date.getMonth() + 1).padStart(2, "0"); // Monate von 0-11, daher +1
+   const day = String(date.getDate()).padStart(2, "0");
+   const hours = String(date.getHours()).padStart(2, "0");
+   const minutes = String(date.getMinutes()).padStart(2, "0");
+
+   // Formatiere das Datum wie von "datetime-local" erwartet
+   return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 // Sets the Status Bar and Tab Bar Color of Safari
 export function setSafariUIColor(color) {
    let themeMetaTag = document.querySelector('meta[name="theme-color"]');

@@ -1,6 +1,6 @@
 import DOM from "./dom.js";
 import { getHistoricalData, getOldestTimestamp, getPeakValues } from "./com.js";
-import { mod, getWeekNumber, constants } from "./helper.js";
+import { mod, getWeekNumber, constants, setDateTimeFromUnix } from "./helper.js";
 import StateBar from "./stateBar.js";
 import PieChart from "./pieChart.js";
 import BarGraph from "./barGraph.js";
@@ -11,6 +11,8 @@ const statsContainer = DOM.create("div.sideContainer#statsContainer");
 const barGraph = new BarGraph();
 const lineGraph = new LineGraph();
 let updateTimeout = setTimeout(() => {}, 1);
+let pickerStartTime = 0;
+let pickerEndTime = 0;
 const amortizationBar = new StateBar();
 const selfSufficiencyBar = new StateBar();
 const selfUseBar = new StateBar();
@@ -21,8 +23,13 @@ let kmBarsIgnoreHidden = false;
 let selectedTabId;
 
 export function build(mainContainer) {
+   getOldestTimestamp().then((res) => {
+      pickerStartTime = res;
+      pickerEndTime = Date.now();
+   });
    statsContainer.appendTo(mainContainer);
    statsContainer.append(buildTabs());
+   statsContainer.append(buildDatetimePickers());
    statsContainer.append(barGraph.container).append(lineGraph.container);
    DOM.create("div")
       .setStyle({ maxWidth: "550px" })
@@ -60,7 +67,7 @@ function buildTabs() {
       .append(DOM.create("div.tab#weeks").setText("Wochen"))
       .append(DOM.create("div.tab#months").setText("Monate"))
       .append(DOM.create("div.tab#years").setText("Jahre"))
-      .append(DOM.create("div.tab#total").setText("Gesamt"));
+      .append(DOM.create("div.tab#custom").setText("Eigene"));
    const tabs = tabContainer.getFirstElement().children;
    for (let tab of tabs) {
       tab = new DOM([tab]);
@@ -74,6 +81,36 @@ function buildTabs() {
       });
    }
    return tabContainer;
+}
+
+function buildDatetimePickers() {
+   const container = DOM.create("div#pickerContainer");
+   const pickerStart = DOM.create("input [type=datetime-local] #pickerStart");
+   container.append(DOM.create("div").append(pickerStart));
+   container.append(DOM.create("div#minus"));
+
+   const pickerEnd = DOM.create("input [type=datetime-local] #pickerEnd");
+   container.append(DOM.create("div").append(pickerEnd));
+
+   const refreshButton = DOM.create("div#refreshButton").setText("Übernehmen");
+   refreshButton.onClick(() => {
+      refreshButton.setStyle({ opacity: "0", pointerEvents: "none" });
+      tabClicked(selectedTabId, true);
+   });
+   container.append(refreshButton);
+
+   pickerStart.getFirstElement().addEventListener("change", function () {
+      const timestamp = new Date(this.value).getTime();
+      pickerStartTime = timestamp;
+      refreshButton.setStyle({ opacity: "1", pointerEvents: "all" });
+   });
+   pickerEnd.getFirstElement().addEventListener("change", function () {
+      const timestamp = new Date(this.value).getTime();
+      pickerEndTime = timestamp;
+      refreshButton.setStyle({ opacity: "1", pointerEvents: "all" });
+   });
+
+   return container;
 }
 
 function buildInfoElements() {
@@ -323,7 +360,7 @@ async function tabClicked(tabId, greyOut = true) {
 
    // Calculate data for different time span options
    let numberOfBars = Math.floor(statsContainer.getWidth() / 25);
-   if (tabId == "total") numberOfBars = 1;
+   if (tabId == "custom") numberOfBars = 1;
    let doneCounter = 0;
    for (let i = 0; i < numberOfBars; i++) {
       let start = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i - numberOfBars + 1).getTime();
@@ -364,12 +401,14 @@ async function tabClicked(tabId, greyOut = true) {
          subTitle = `${new Date(start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })} - ${new Date(end).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })}`;
          lineGraphLabels = "Jan Feb Mär Apr Mai Jun Jul Aug Sep Okt Nov Dez".split(" ");
       }
-      if (tabId == "total") {
-         start = await getOldestTimestamp();
-         end = Date.now();
+      if (tabId == "custom") {
+         start = pickerStartTime;
+         end = pickerEndTime;
          blockLength = (end - start) / 96;
-         title = "Gesamtbilanz";
-         subTitle = `${new Date(start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })} bis heute`;
+         title = "";
+         subTitle = "";
+         DOM.select("pickerStart").setValue(setDateTimeFromUnix(start));
+         DOM.select("pickerEnd").setValue(setDateTimeFromUnix(end));
          const numberOfDays = Math.round((end - start) / (24 * 60 * 60 * 1000));
          lineGraphLabels = [`${numberOfDays} Tage`];
       }
@@ -408,7 +447,13 @@ async function tabClicked(tabId, greyOut = true) {
    }
    const interval = setInterval(() => {
       if (doneCounter < numberOfBars) return;
-      barGraph.setVisibility(tabId != "total");
+      if (tabId == "custom") {
+         DOM.select("pickerContainer").setStyle({ display: "flex" });
+         barGraph.setVisibility(false);
+      } else {
+         DOM.select("pickerContainer").setStyle({ display: "none" });
+         barGraph.setVisibility(true);
+      }
       barGraph.draw();
       statsContainer.removeClass("waiting");
       clearInterval(interval);
@@ -519,7 +564,7 @@ function processStatistics(data) {
    const timeLeft = (timeSpan / savedMoney) * constants.totalSystemCost;
    const endDate = new Date(Date.now() + timeLeft).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
    amortizationBar.setInfoText(`100% am ${endDate}`);
-   amortizationBar.setVisibility(selectedTabId == "total");
+   amortizationBar.setVisibility(selectedTabId == "custom");
 
    // Energy Mix
    const directSunUseEnergy =

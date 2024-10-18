@@ -18,7 +18,7 @@ def request(path, params):
       if action == "batt_soc":
          return liveData[0]["batt_soc"]
       if action == "summary":
-         answer = "Die Solaranlage produziert gerade " + str(liveData[0]["p_sun"]) + " Watt, der Verbrauch liegt bei " + str(liveData[0]["p_load"]) + " Watt. Die Batterie ist zu " + str(liveData[0]["batt_soc"]) + " Prozent geladen."
+         answer = "Die Solaranlage produziert gerade " + str(liveData[0]["p_sun"]) + " Watt und der Verbrauch liegt bei " + str(liveData[0]["p_load"]) + " Watt. Die Batterie ist zu " + str(liveData[0]["batt_soc"]) + " Prozent geladen."
          return answer
 
    # Historical Data
