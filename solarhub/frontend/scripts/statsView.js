@@ -11,6 +11,7 @@ const statsContainer = DOM.create("div.sideContainer#statsContainer");
 const barGraph = new BarGraph();
 const lineGraph = new LineGraph();
 let updateTimeout = setTimeout(() => {}, 1);
+let pickerWithTime = 0;
 let pickerStartTime = 0;
 let pickerEndTime = 0;
 const amortizationBar = new StateBar();
@@ -85,27 +86,52 @@ function buildTabs() {
 
 function buildDatetimePickers() {
    const container = DOM.create("div#pickerContainer");
-   const pickerStart = DOM.create("input [type=datetime-local] #pickerStart");
+   const pickerStart = DOM.create("input [type=date] #pickerStart");
    container.append(DOM.create("div").append(pickerStart));
    container.append(DOM.create("div#minus"));
 
-   const pickerEnd = DOM.create("input [type=datetime-local] #pickerEnd");
+   let pickerEnd = DOM.create("input [type=date] #pickerEnd");
    container.append(DOM.create("div").append(pickerEnd));
 
-   const refreshButton = DOM.create("div#refreshButton").setText("Übernehmen");
+   let refreshButton = DOM.create("div#refreshButton").setText("Übernehmen");
    refreshButton.onClick(() => {
       refreshButton.setStyle({ opacity: "0", pointerEvents: "none" });
       tabClicked(selectedTabId, true);
    });
    container.append(refreshButton);
 
+   const checkBoxContainer = DOM.create("div").setStyle({ position: "absolute", display: "flex", alignItems: "center", bottom: "-30px", zIndex: "99" }).appendTo(container);
+   const box = DOM.create("input [type=checkbox]").setStyle({ marginRight: "7px" });
+   const label = DOM.create("label").setText("Inkl. Uhrzeit");
+   checkBoxContainer.append(box, label);
+   container.append(checkBoxContainer);
+
+   const waitInterval = setInterval(() => {
+      if (pickerStartTime == 0 || pickerEndTime == 0) return;
+      clearInterval(waitInterval);
+      box.onChange(() => {
+         pickerWithTime = box.getFirstElement().checked;
+         if (pickerWithTime) {
+            pickerStart.attr({ type: "datetime-local" });
+            pickerEnd.attr({ type: "datetime-local" });
+         } else {
+            pickerStart.attr({ type: "date" });
+            pickerEnd.attr({ type: "date" });
+         }
+         pickerStart.setValue(setDateTimeFromUnix(pickerStartTime, pickerWithTime));
+         pickerEnd.setValue(setDateTimeFromUnix(pickerEndTime, pickerWithTime));
+         refreshButton.setStyle({ opacity: "1", pointerEvents: "all" });
+      }, true);
+      refreshButton.setStyle({ opacity: "0", pointerEvents: "none" });
+   }, 100);
+
    pickerStart.getFirstElement().addEventListener("change", function () {
-      const timestamp = new Date(this.value).getTime();
+      let timestamp = new Date(this.value).getTime();
       pickerStartTime = timestamp;
       refreshButton.setStyle({ opacity: "1", pointerEvents: "all" });
    });
    pickerEnd.getFirstElement().addEventListener("change", function () {
-      const timestamp = new Date(this.value).getTime();
+      let timestamp = new Date(this.value).getTime();
       pickerEndTime = timestamp;
       refreshButton.setStyle({ opacity: "1", pointerEvents: "all" });
    });
@@ -404,11 +430,13 @@ async function tabClicked(tabId, greyOut = true) {
       if (tabId == "custom") {
          start = pickerStartTime;
          end = pickerEndTime;
+         if (!pickerWithTime) {
+            start = new Date(start).setHours(0, 0, 0, 0);
+            end = new Date(end).setHours(23, 59, 59, 999);
+         }
          blockLength = (end - start) / 96;
          title = "";
          subTitle = "";
-         DOM.select("pickerStart").setValue(setDateTimeFromUnix(start));
-         DOM.select("pickerEnd").setValue(setDateTimeFromUnix(end));
          const numberOfDays = Math.round((end - start) / (24 * 60 * 60 * 1000));
          lineGraphLabels = [`${numberOfDays} Tage`];
       }

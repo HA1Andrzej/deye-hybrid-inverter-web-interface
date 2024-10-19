@@ -64,19 +64,21 @@ Number.prototype.toTwoDecimalString = function (decimalCutoffThreshold) {
    return res.replace(".", ",");
 };
 
-export function setDateTimeFromUnix(unixTimestamp) {
-   // Erstelle ein Datum basierend auf dem Unix-Timestamp
+// Timestamp to formatted String for Date(Time) Pickers
+export function setDateTimeFromUnix(unixTimestamp, withTime) {
    const date = new Date(unixTimestamp);
 
-   // Erstelle das Format YYYY-MM-DDTHH:MM
    const year = date.getFullYear();
    const month = String(date.getMonth() + 1).padStart(2, "0"); // Monate von 0-11, daher +1
    const day = String(date.getDate()).padStart(2, "0");
-   const hours = String(date.getHours()).padStart(2, "0");
-   const minutes = String(date.getMinutes()).padStart(2, "0");
 
-   // Formatiere das Datum wie von "datetime-local" erwartet
-   return `${year}-${month}-${day}T${hours}:${minutes}`;
+   if (withTime) {
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+   } else {
+      return `${year}-${month}-${day}`;
+   }
 }
 
 // Sets the Status Bar and Tab Bar Color of Safari
