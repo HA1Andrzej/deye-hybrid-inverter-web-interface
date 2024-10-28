@@ -638,10 +638,16 @@ function processStatistics(data) {
    ]);
 
    // Solar Sources
-   const stringEnergy =
+   const string1Energy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
-         const power = a.p_string1 + a.p_string2;
+         const power = a.p_string1;
+         return acc + power * timeDiff;
+      }, 0) / 3_600_000;
+   const string2Energy =
+      data.values.reduce((acc, a) => {
+         const timeDiff = a.timestamp_end - a.timestamp_start;
+         const power = a.p_string2;
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    const genPortEnergy =
@@ -651,8 +657,9 @@ function processStatistics(data) {
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
    solarSourcePieChart.setData([
-      { value: stringEnergy, color: { r: 255, g: 199, b: 0 }, description: "Hüttendach" },
-      { value: genPortEnergy, color: { r: 204, g: 159, b: 0 }, description: "Balkonkraftwerke" },
+      { value: string1Energy, color: { r: 255, g: 199, b: 0 }, description: "Dach String 2+3" },
+      { value: string2Energy, color: { r: 204, g: 159, b: 0 }, description: "Dach String 1" },
+      { value: genPortEnergy, color: { r: 153, g: 119, b: 0 }, description: "Mikrowechselrichter" },
    ]);
 
    // Autarkiegrad & Eigenverbrauch
