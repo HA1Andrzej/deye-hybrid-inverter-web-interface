@@ -217,6 +217,9 @@ input[type="date"] {
    border-radius: 16px;
    background-color: transparent;
    text-decoration: none;
+   @media (prefers-color-scheme: dark) {
+      border: 2px solid rgba(255, 255, 255, 0.08);
+   }
 }
 
 #refreshButton {

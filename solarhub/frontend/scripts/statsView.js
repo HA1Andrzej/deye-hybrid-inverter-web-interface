@@ -19,6 +19,7 @@ const selfSufficiencyBar = new StateBar();
 const selfUseBar = new StateBar();
 const energyMixPieChart = new PieChart();
 const energyDistributionPieChart = new PieChart();
+const solarSourcePieChart = new PieChart();
 const kmBars = [];
 let kmBarsIgnoreHidden = false;
 let selectedTabId;
@@ -41,6 +42,7 @@ export function build(mainContainer) {
          buildFinancesContainer(),
          buildEnergyMixContainer(),
          buildEnergyDistributionContainer(),
+         buildSolarSourceContainer(),
          buildIndependencyBars(),
          buildBatteryHealthContainer(),
          buildCo2Container(),
@@ -265,6 +267,15 @@ function buildEnergyDistributionContainer() {
    const container = DOM.create("div");
    container.append(buildBigTitle("energy_mix.png", "Stromverteilung", "Dahin fließt der von der Solaranlage produzierte Strom"));
    container.append(energyDistributionPieChart.container);
+   return container;
+}
+
+// Builds the Pie Chart UI
+function buildSolarSourceContainer() {
+   energyDistributionPieChart.setIcon("sun.png", { r: 255, g: 199, b: 0 }, true);
+   const container = DOM.create("div");
+   container.append(buildBigTitle("energy_mix.png", "Solaraufteilung", "Aus diesen Teilsystemen kommt unser Sonnenstrom"));
+   container.append(solarSourcePieChart.container);
    return container;
 }
 
@@ -624,6 +635,24 @@ function processStatistics(data) {
       { value: gridExportEnergy, color: { r: 255, g: 44, b: 133 }, description: "Netzeinspeisung" },
       { value: directSunUseEnergy, color: { r: 48, g: 150, b: 255 }, description: "Direktverbrauch" },
       { value: batteryChargeEnergy, color: { r: 0, g: 210, b: 140 }, description: "Batterieladung" },
+   ]);
+
+   // Solar Sources
+   const stringEnergy =
+      data.values.reduce((acc, a) => {
+         const timeDiff = a.timestamp_end - a.timestamp_start;
+         const power = a.p_string1 + a.p_string2;
+         return acc + power * timeDiff;
+      }, 0) / 3_600_000;
+   const genPortEnergy =
+      data.values.reduce((acc, a) => {
+         const timeDiff = a.timestamp_end - a.timestamp_start;
+         const power = Math.max(0, a.p_gen);
+         return acc + power * timeDiff;
+      }, 0) / 3_600_000;
+   solarSourcePieChart.setData([
+      { value: stringEnergy, color: { r: 255, g: 199, b: 0 }, description: "Hüttendach" },
+      { value: genPortEnergy, color: { r: 204, g: 159, b: 0 }, description: "Balkonkraftwerke" },
    ]);
 
    // Autarkiegrad & Eigenverbrauch
