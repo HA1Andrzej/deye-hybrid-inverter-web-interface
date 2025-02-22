@@ -15,15 +15,16 @@ export default class BarGraph {
    draw() {
       this.elements.sort((a, b) => a.data.start - b.data.start);
       this.container.setContent("");
-      const containerHeight = 225;
+      const containerHeight = 230;
+      const labelHeight = 25;
       const maxVal = Math.max(...this.elements.map((elem) => Math.max(elem.a, elem.b)));
-      const scalingFactor = containerHeight / maxVal / 2;
+      const scalingFactor = (containerHeight - labelHeight) / maxVal / 2;
       for (let i = 0; i < this.elements.length; i++) {
          const elem = this.elements[i];
          const elementContainer = DOM.create("div.elementContainer");
-         const bar1Height = Math.max(elem.a * scalingFactor, 7);
-         const bar2Height = Math.max(elem.b * scalingFactor, 7);
-         const offset = containerHeight / 2 - bar1Height;
+         const bar1Height = Math.max(elem.a * scalingFactor, 2);
+         const bar2Height = Math.max(elem.b * scalingFactor, 2);
+         const offset = (containerHeight - labelHeight) / 2 - bar1Height;
          DOM.create("div.bar.upper")
             .setStyle({
                height: bar1Height + "px",
