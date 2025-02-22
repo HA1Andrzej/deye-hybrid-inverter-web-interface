@@ -1,7 +1,7 @@
 import DOM from "./dom.js";
 import * as LiveView from "./liveView.js";
 import * as StatsView from "./statsView.js";
-import { setSafariUIColor, mod } from "./helper.js";
+import { setSafariUIColor, mod, constants } from "./helper.js";
 
 // Variables
 const mainContainer = DOM.select("mainContainer");
@@ -13,11 +13,21 @@ const divider = DOM.create("div#divider");
 setTimeout(() => {
    loadingContainer.setStyle({ opacity: "0" });
 }, 1400);
-setTimeout(() => {
+
+function buildUI() {
+   if (!constants) {
+      setTimeout(() => {
+         buildUI();
+      }, 100);
+      return;
+   }
    LiveView.build(mainContainer);
    divider.appendTo(mainContainer);
    StatsView.build(mainContainer);
-}, 400);
+}
+setTimeout(() => {
+   buildUI();
+}, 300);
 
 // Set Display Mode
 // Mode 0 = default,

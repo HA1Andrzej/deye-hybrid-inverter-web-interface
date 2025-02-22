@@ -6,6 +6,8 @@ import time
 import re
 import socket
 import json
+import urllib.request
+
 
 STARTUP_DELAY = 2*60
 CHECK_INTERVAL = 30
@@ -39,7 +41,7 @@ def isConnectedToWifi(host="8.8.8.8"):
    return False
 
 
-def getIpAdress():
+def getIpAddress():
    try:
       s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       s.connect(("8.8.8.8", 80))
@@ -48,6 +50,10 @@ def getIpAdress():
       return ip_address
    except Exception as e:
       return f"Fehler: {e}"
+
+def getPublicIpAddress():
+   with urllib.request.urlopen("https://api64.ipify.org?format=text") as response:
+      return response.read().decode().strip()
 
 def startAP():
    with open('config.json', 'r') as file:

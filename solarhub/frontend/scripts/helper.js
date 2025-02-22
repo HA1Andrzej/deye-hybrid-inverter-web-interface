@@ -1,7 +1,7 @@
 import { getConfig } from "./com.js";
 
 // Constants
-export let constants = {};
+export let constants;
 getConfig().then((res) => {
    constants = res;
    console.log(constants);

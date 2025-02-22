@@ -74,7 +74,7 @@ def request(path, params):
          data = dbManager.query(queryString)
          return json.dumps(json.loads(data)[0])
       if action == "oldest":
-         queryString = f"""
+         queryString = """
             SELECT *
                FROM logs
             ORDER BY timestamp ASC

@@ -6,6 +6,7 @@ import os
 import dbManager
 import json
 import glob
+import wifiManager
 
 def start():
    global cursor, conn, config, batteryLimits
@@ -46,6 +47,8 @@ def start():
    liveValueBuffer = {}
    valueHistory = {}
    prevTime = time.time()
+   counter = 0
+   publicIpAddress = ""
    while True:
       readLiveValues(liveValueBuffer)
       manageBattery(liveValueBuffer);
@@ -68,6 +71,15 @@ def start():
          averages = {name: sum(valueHistory[name]) / len(valueHistory[name]) for name in valueHistory}
          valueHistory = {}
          dbManager.addRowToTable("logs", averages)
+
+      # Check Public IP Address every few runs and update if neccessary
+      counter = counter+1
+      if counter >= 600: # roughly every 10 Minutes
+         counter = 0
+         ip = wifiManager.getPublicIpAddress()
+         if publicIpAddress != ip:
+            publicIpAddress = ip
+            sendTelegramMessage("Neue Interface-URL: " + publicIpAddress + ":1213", silent=True, pin=True)
 
       # Save all changes and wait
       conn.commit()
