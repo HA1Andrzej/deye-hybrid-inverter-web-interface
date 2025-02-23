@@ -27,7 +27,8 @@
    align-items: center;
    justify-content: center;
    box-sizing: border-box;
-   border-top: 3px solid rgba(0, 0, 0, 0.08);
+   border-top: 3px solid var(--textColor);
+   opacity: 0.1;
    border-top-left-radius: 3px;
    border-top-right-radius: 3px;
    justify-content: space-between;
@@ -36,7 +37,7 @@
 .lineGraphTickLine {
    width: 3px;
    height: 100%;
-   background-color: rgba(0, 0, 0, 0.08);
+   background-color: var(--textColor);
    border-bottom-left-radius: 5px;
    border-bottom-right-radius: 5px;
 }
@@ -79,6 +80,8 @@
 #hoverBox {
    padding: 20px;
    background-color: var(--foregroundColor);
+   backdrop-filter: blur(15px);
+   -webkit-backdrop-filter: blur(15px);
    box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.05);
    border-radius: 16px;
    display: flex;

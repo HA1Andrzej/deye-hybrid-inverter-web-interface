@@ -31,8 +31,7 @@ setTimeout(() => {
 
 // Set Display Mode
 // Mode 0 = default,
-// Mode 1 = cards,
-// Mode 2 = Broken iPad Screen Mode
+// Mode 1 = Broken iPad Screen Mode
 let displayMode = JSON.parse(localStorage.getItem("displayMode")) ?? 0;
 setTimeout(() => {
    setDisplayMode(displayMode);
@@ -50,6 +49,10 @@ function setDisplayMode(mode) {
          height: "",
          backgroundColor: "",
       });
+      DOM.select("statsContainer").setStyle({
+         backgroundColor: "",
+      });
+      document.body.style.background = "";
       divider.setStyle({
          backgroundColor: "",
          opacity: "",
@@ -68,6 +71,10 @@ function setDisplayMode(mode) {
          height: "100vh",
          backgroundColor: "var(--themeColor)",
       });
+      DOM.select("statsContainer").setStyle({
+         backgroundColor: "var(--themeColor)",
+      });
+      document.body.style.background = "black";
       divider.setStyle({
          backgroundColor: "black",
          opacity: "1",

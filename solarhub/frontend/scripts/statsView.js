@@ -223,7 +223,7 @@ function buildFinancesContainer() {
          justifyContent: "center",
       })
       .appendTo(financesContainer);
-   const costBoxWithPv = DOM.create("div.costBoxGreen").append(DOM.create("t.costBoxValue#costWithPvValue"));
+   const costBoxWithPv = DOM.create("div.costBoxGreen#costBoxWithPv").append(DOM.create("t.costBoxValue#costWithPvValue"));
    const costBoxWithoutPv = DOM.create("div.costBoxRed").append(DOM.create("t.costBoxValue#costWithoutPvValue"));
    DOM.create("div")
       .setStyle({ display: "flex", gap: "10px", marginTop: "20px" })
@@ -235,7 +235,7 @@ function buildFinancesContainer() {
             .append(costBoxWithoutPv),
       )
       .appendTo(financesInnerContainer);
-   DOM.create("img [src=/assets/images/finances_sum_arrow.png]").setStyle({ width: "80px", height: "80px", objectFit: "contain" }).appendTo(financesInnerContainer);
+   DOM.create("img [src=/assets/images/finances_sum_arrow.png]").setStyle({ height: "55px", margin: "20px 0px", objectFit: "contain", opacity: "0.2" }).appendTo(financesInnerContainer);
    const costBoxSaved = DOM.create("div.costBoxGreen").append(DOM.create("t.costBoxValue#costSavedValue"));
    DOM.create("div.financesElementContainer")
       .append(DOM.create("t.financesText").setText("Gespart"))
@@ -290,13 +290,13 @@ function buildCo2Container() {
       buildSimpleIconTextElement("car.png", "co2CarKmText", "km Verbrenner äquivalent"),
       buildSimpleIconTextElement("tree.png", "co2TreesText", "Bäume im gleichen Zeitraum"),
       buildSimpleIconTextElement("coal.png", "co2CoalText", "kg Kohle nicht verbrannt"),
-      buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
-      buildSimpleIconTextElement("", "", "Gramm Feinstaub vermieden"),
-      buildSimpleIconTextElement("", "", "Gramm Stick- & Schwefeloxide vermieden"),
-      buildSimpleIconTextElement("", "", "Atemwegserkrankungen vermieden"),
-      buildSimpleIconTextElement("", "", "Tode vermieden"),
-      buildSimpleIconTextElement("", "", "€ öffentliche Gesundheitskosten gespart"),
-      buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
+      //buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
+      //buildSimpleIconTextElement("", "", "Gramm Feinstaub vermieden"),
+      //buildSimpleIconTextElement("", "", "Gramm Stick- & Schwefeloxide vermieden"),
+      //buildSimpleIconTextElement("", "", "Atemwegserkrankungen vermieden"),
+      //buildSimpleIconTextElement("", "", "Tode vermieden"),
+      //buildSimpleIconTextElement("", "", "€ öffentliche Gesundheitskosten gespart"),
+      //buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
    );
 
    return container;
@@ -596,6 +596,11 @@ function processStatistics(data) {
    const savedMoney = actualCost + marketPriceOfEnergyUsed;
    DOM.select("costWithoutPvValue").setText(`-${marketPriceOfEnergyUsed.toEuroString()}`);
    DOM.select("costWithPvValue").setText((actualCost > 0 ? "+" : "-") + Math.abs(actualCost).toEuroString());
+   if (actualCost < 0) {
+      DOM.select("costBoxWithPv").removeClass("costBoxGreen").addClass("costBoxRed");
+   } else {
+      DOM.select("costBoxWithPv").removeClass("costBoxRed").addClass("costBoxGreen");
+   }
    DOM.select("costSavedValue").setText(savedMoney.toEuroString());
    const amortized = Math.round((savedMoney / constants.totalSystemCost) * 10000) / 100;
    amortizationBar.setValue(amortized);
@@ -659,7 +664,7 @@ function processStatistics(data) {
    solarSourcePieChart.setData([
       { value: string1Energy, color: { r: 255, g: 199, b: 0 }, description: "Dach String 2+3" },
       { value: string2Energy, color: { r: 204, g: 159, b: 0 }, description: "Dach String 1" },
-      { value: genPortEnergy, color: { r: 153, g: 119, b: 0 }, description: "Mikrowechselrichter" },
+      { value: genPortEnergy, color: { r: 173, g: 135, b: 0 }, description: "Mikrowechselrichter" },
    ]);
 
    // Autarkiegrad & Eigenverbrauch

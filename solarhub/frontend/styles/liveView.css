@@ -21,6 +21,7 @@
 @media (pointer: fine) {
    #settingsButton:hover {
       background-color: rgba(47, 150, 255, 0.1);
+      cursor: pointer;
    }
 }
 
