@@ -65,6 +65,7 @@ function updateLiveData() {
       sunPowerBar.setValue(data.p_sun);
       loadPowerBar.setValue(data.p_load);
       batterySocBar.setValue(data.batt_soc);
+
       if (data.batt_soc >= 100 * constants.battery.charge.limit) {
          batterySocBar.setInfoText("Batterie voll");
       } else if (data.batt_soc <= 100 * constants.battery.discharge.limit) {

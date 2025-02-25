@@ -74,7 +74,6 @@
    margin-left: -2px;
    border-radius: 10px;
    bottom: 4px;
-   background-color: var(--textColor);
    position: absolute;
    z-index: 4;
 }

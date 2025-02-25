@@ -42,6 +42,7 @@ export default class StateBar {
       });
    }
    setColor(color) {
+      this.color = color;
       this.barOuter.setStyle({
          // backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.18)`,
          backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
@@ -80,7 +81,9 @@ export default class StateBar {
       this.value.setText(text);
    }
    addMarker(val) {
-      const marker = DOM.create("div.marker").appendTo(this.container);
+      const marker = DOM.create("div.marker")
+         .setStyle({ backgroundColor: `rgba(${this.color.r * 0.7}, ${this.color.g * 0.7}, ${this.color.b * 0.7}, 1)` })
+         .appendTo(this.container);
       let ratio = Math.min((val / this.maxValue) * 100, 100);
       marker.setStyle({
          left: ratio + "%",
