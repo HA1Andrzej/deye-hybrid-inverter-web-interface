@@ -46,7 +46,8 @@ export function build(mainContainer) {
          buildIndependencyBars(),
          buildBatteryHealthContainer(),
          buildCo2Container(),
-         buildKmBars(),
+         buildComparisonStats(),
+         //buildKmBars(),
          DOM.create("t#debugText").setStyle({ display: "block", marginTop: "100px" }),
       )
       .appendTo(statsContainer);
@@ -142,15 +143,13 @@ function buildDatetimePickers() {
 }
 
 function buildInfoElements() {
-   const container = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", marginTop: "40px" });
+   const container = DOM.create("div").setStyle({ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "40px", flexWrap: "wrap", gap: "15px" });
    DOM.create("div")
-      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: "10px" })
       .appendTo(container)
-      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"));
+      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"));
    DOM.create("div")
-      .setStyle({ display: "flex", alignItems: "center", justifyContent: "center", flexWrap: "wrap", gap: "10px" })
       .appendTo(container)
-      .append(buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"));
+      .append(buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"));
    return container;
 }
 
@@ -198,7 +197,7 @@ function buildGridRatioBar() {
    );
 
    const barContainer = DOM.create("div#ratioBarContainer").appendTo(ratioContainer);
-   barContainer.append(DOM.create("div.ratioBar#ratioBarGreen"), DOM.create("div.ratioBar#ratioBarRed"));
+   barContainer.append(DOM.create("div.ratioBar.reflection#ratioBarGreen"), DOM.create("div.ratioBar.reflection#ratioBarRed"));
 
    const costContainer = DOM.create("div#ratioCostContainer").appendTo(ratioContainer);
    const costBoxIn = DOM.create("div.costBoxGreen").appendTo(costContainer);
@@ -363,6 +362,29 @@ function buildBatteryHealthContainer() {
       buildSimpleIconTextElement("avg_batt.png", "avgBatterySoCText", "% Durchschnitt"),
       buildSimpleIconTextElement("batt_cycles.png", "batteryCyclesText", "Zyklen"),
       buildSimpleIconTextElement("batt_soh.png", "batterySoHText", "% State of Health (± 5%)"),
+   );
+   return container;
+}
+
+// Build UI for the interesting energy comparison facts
+function buildComparisonStats() {
+   const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
+   container.append(buildBigTitle("gears.png", "Vergleichswerte", "Die produzierte Menge an Energie würde reichen für..."));
+   const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
+   elemContainer.append(
+      buildSimpleIconTextElement("smartphone.png", "smartphoneCharges", "mal Smartphone laden"),
+      buildSimpleIconTextElement("boiling_water.png", "litersOfBoilingWater", "Liter Wasser kochen"),
+      buildSimpleIconTextElement("car.png", "kilometersECar", "km E-Auto fahren"),
+      buildSimpleIconTextElement("bike.png", "kilometersBike", "km Fahrrad fahren"),
+      buildSimpleIconTextElement("coffee.png", "timesCoffee", "mal Kaffee machen"),
+      buildSimpleIconTextElement("lightbulb.png", "hoursLight", "Stunden einen Raum beleuchten"),
+      buildSimpleIconTextElement("tv.png", "hoursTv", "Stunden Fernsehen"),
+      buildSimpleIconTextElement("oven.png", "hoursOven", "Stunden Backofen"),
+      buildSimpleIconTextElement("microwave.png", "hoursMicrowave", "Stunden Mikrowelle"),
+      buildSimpleIconTextElement("fridge.png", "hoursFridge", "Stunden Kühlschrank"),
+      buildSimpleIconTextElement("washing_machine.png", "timesWashing", "mal Wäsche waschen"),
+      buildSimpleIconTextElement("vacuum.png", "hoursVacuum", "Stunden Staubsaugen"),
+      buildSimpleIconTextElement("windturbine.png", "windRotations", "Windrad-Umdrehungen"),
    );
    return container;
 }
@@ -688,8 +710,36 @@ function processStatistics(data) {
    DOM.select("co2TreesText").setText(numberOfTrees);
    DOM.select("co2CoalText").setText((gramsOfSavedCoal / 1000).toTwoDecimalString(50));
 
+   // Comparison Stats
+   const numberOfSmartphoneCharges = Math.round(data.sunEnergy / 15).toLocaleString("de-DE");
+   DOM.select("smartphoneCharges").setText(numberOfSmartphoneCharges);
+   const numberOfLitersWaterBoiled = Math.round(data.sunEnergy / 93.02).toLocaleString("de-DE");
+   DOM.select("litersOfBoilingWater").setText(numberOfLitersWaterBoiled);
+   const kilometersECar = Math.round(data.sunEnergy / 180).toLocaleString("de-DE");
+   DOM.select("kilometersECar").setText(kilometersECar);
+   const kilometersBike = Math.round(data.sunEnergy / 5).toLocaleString("de-DE");
+   DOM.select("kilometersBike").setText(kilometersBike);
+   const timesCoffee = Math.round(data.sunEnergy / 40).toLocaleString("de-DE");
+   DOM.select("timesCoffee").setText(timesCoffee);
+   const hoursLight = Math.round(data.sunEnergy / 30).toLocaleString("de-DE");
+   DOM.select("hoursLight").setText(hoursLight);
+   const hoursTv = Math.round(data.sunEnergy / 70).toLocaleString("de-DE");
+   DOM.select("hoursTv").setText(hoursTv);
+   const hoursOven = Math.round(data.sunEnergy / 2500).toLocaleString("de-DE");
+   DOM.select("hoursOven").setText(hoursOven);
+   const hoursMicrowave = Math.round(data.sunEnergy / 900).toLocaleString("de-DE");
+   DOM.select("hoursMicrowave").setText(hoursMicrowave);
+   const hoursFridge = Math.round(data.sunEnergy / 50).toLocaleString("de-DE");
+   DOM.select("hoursFridge").setText(hoursFridge);
+   const timesWashing = Math.round(data.sunEnergy / 900).toLocaleString("de-DE");
+   DOM.select("timesWashing").setText(timesWashing);
+   const hoursVacuum = Math.round(data.sunEnergy / 800).toLocaleString("de-DE");
+   DOM.select("hoursVacuum").setText(hoursVacuum);
+   const windRotations = (Math.round((data.sunEnergy / 4670) * 10) / 10).toLocaleString("de-DE");
+   DOM.select("windRotations").setText(windRotations);
+
    // Km Bars
-   const ranges = [
+   /*const ranges = [
       { name: "Privatjet", value: (data.sunEnergy / 4_320_000) * 100, icon: "jet.png", hidden: true },
       { name: "Motorboot", value: (data.sunEnergy / 282_000) * 100, icon: "yacht.png", hidden: true },
       { name: "Verbrenner-SUV", value: (data.sunEnergy / 82_000) * 100, icon: "car.png", hidden: true },
@@ -729,7 +779,7 @@ function processStatistics(data) {
       kmBarsIgnoreHidden = !kmBarsIgnoreHidden;
       updateBars();
    });
-   updateBars();
+   updateBars();*/
 
    // Battery Health
    const batteryDischargeEnergy =
@@ -761,7 +811,6 @@ function processStatistics(data) {
    DOM.select("avgBatterySoCText").setText(Math.round(avgSoc));
 
    // Other fun statistics
-   const numberOfSmartphoneCharges = Math.round(data.sunEnergy / 15);
    debugText.appendText(`\n${numberOfSmartphoneCharges}x Smartphone laden`);
    const lossesEnergy =
       data.values.reduce((acc, a) => {

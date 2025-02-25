@@ -74,7 +74,9 @@ html::before {
    right: 0;
    position: fixed;
    z-index: -10;
-   @media (prefers-color-scheme: dark) {
+}
+@media (prefers-color-scheme: dark) {
+   html::before {
       background: linear-gradient(135deg, rgba(20, 45, 35), rgba(40, 50, 70));
    }
 }
@@ -99,6 +101,24 @@ html::before {
 .subTitle {
    margin-bottom: 10px;
    opacity: 0.26;
+}
+
+.reflection {
+   position: relative;
+}
+.reflection::after {
+   content: "";
+   display: block;
+   height: 8px;
+   width: calc(100% - 8px);
+   margin: 3px;
+   margin-left: 4px;
+   border: 0px solid rgba(255, 255, 255, 0.4);
+   border-top-width: 3px;
+   border-radius: 50px;
+   position: absolute;
+   top: 0px;
+   z-index: 21;
 }
 
 #mainContainer {

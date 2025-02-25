@@ -66,19 +66,7 @@
    border-radius: 30px;
    transition: 0.3s;
    z-index: 3;
-   position: relative;
 }
-/*.stateBarInner::after {
-   content: "";
-   display: block;
-   height: 8px;
-   width: calc(100% - 8px);
-   margin: 3px;
-   margin-left: 4px;
-   border: 0px solid rgba(255, 255, 255, 0.4);
-   border-top-width: 3px;
-   border-radius: 50px;
-   }*/
 
 .stateBarContainer .marker {
    width: 4px;

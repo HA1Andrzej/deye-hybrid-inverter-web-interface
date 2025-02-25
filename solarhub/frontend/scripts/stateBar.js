@@ -14,7 +14,7 @@ export default class StateBar {
       this.spacer = DOM.create("div").setStyle({ flexGrow: "1" }).appendTo(this.textContainer);
       this.infoText = DOM.create("t.stateBarInfoText").appendTo(this.textContainer);
       this.barOuter = DOM.create("div.stateBarOuter").appendTo(this.container);
-      this.barInner = DOM.create("div.stateBarInner").appendTo(this.container);
+      this.barInner = DOM.create("div.stateBarInner.reflection").appendTo(this.container);
    }
    center() {
       this.container.setStyle({ alignItems: "center" });

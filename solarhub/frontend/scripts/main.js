@@ -33,14 +33,14 @@ setTimeout(() => {
 // Mode 0 = default,
 // Mode 1 = Broken iPad Screen Mode
 let displayMode = JSON.parse(localStorage.getItem("displayMode")) ?? 0;
-setTimeout(() => {
+/*setTimeout(() => {
    setDisplayMode(displayMode);
    DOM.select("dateTimeContainer").onClick(() => {
       displayMode = mod(displayMode + 1, 2);
       setDisplayMode(displayMode);
       localStorage.setItem("displayMode", displayMode);
    });
-}, 1000);
+}, 1000);*/
 function setDisplayMode(mode) {
    if (mode == 0) {
       DOM.select("liveContainer").setStyle({
@@ -52,7 +52,7 @@ function setDisplayMode(mode) {
       DOM.select("statsContainer").setStyle({
          backgroundColor: "",
       });
-      document.body.style.background = "";
+      //document.body.style.background = "";
       divider.setStyle({
          backgroundColor: "",
          opacity: "",
@@ -74,7 +74,7 @@ function setDisplayMode(mode) {
       DOM.select("statsContainer").setStyle({
          backgroundColor: "var(--themeColor)",
       });
-      document.body.style.background = "black";
+      //document.body.style.background = "black";
       divider.setStyle({
          backgroundColor: "black",
          opacity: "1",
