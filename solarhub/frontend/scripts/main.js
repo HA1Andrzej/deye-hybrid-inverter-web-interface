@@ -33,14 +33,14 @@ setTimeout(() => {
 // Mode 0 = default,
 // Mode 1 = Broken iPad Screen Mode
 let displayMode = JSON.parse(localStorage.getItem("displayMode")) ?? 0;
-/*setTimeout(() => {
+setTimeout(() => {
    setDisplayMode(displayMode);
    DOM.select("dateTimeContainer").onClick(() => {
       displayMode = mod(displayMode + 1, 2);
       setDisplayMode(displayMode);
       localStorage.setItem("displayMode", displayMode);
    });
-}, 1000);*/
+}, 1000);
 function setDisplayMode(mode) {
    if (mode == 0) {
       DOM.select("liveContainer").setStyle({
@@ -52,7 +52,7 @@ function setDisplayMode(mode) {
       DOM.select("statsContainer").setStyle({
          backgroundColor: "",
       });
-      //document.body.style.background = "";
+      document.body.style.background = "";
       divider.setStyle({
          backgroundColor: "",
          opacity: "",
@@ -61,7 +61,7 @@ function setDisplayMode(mode) {
          width: "",
       });
       const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--themeColor").trim();
-      setSafariUIColor(themeColor);
+      //setSafariUIColor(themeColor);
    }
 
    if (mode == 1) {
@@ -69,10 +69,10 @@ function setDisplayMode(mode) {
          maxWidth: "calc(50% - 175px)",
          margin: "0px",
          height: "100vh",
-         backgroundColor: "var(--themeColor)",
+         backgroundColor: "transparent",
       });
       DOM.select("statsContainer").setStyle({
-         backgroundColor: "var(--themeColor)",
+         //backgroundColor: "var(--themeColor)",
       });
       //document.body.style.background = "black";
       divider.setStyle({
@@ -82,6 +82,6 @@ function setDisplayMode(mode) {
          borderRadius: "0",
          width: "175px",
       });
-      setSafariUIColor("#000000");
+      //setSafariUIColor("#000000");
    }
 }
