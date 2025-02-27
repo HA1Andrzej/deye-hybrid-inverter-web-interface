@@ -42,4 +42,4 @@ if __name__ == "__main__":
    installDependencies()
    createService()
    print("---------------------------------------")
-   print(f"Done, your service is up now. Visit the interface by entering the IP-Adress (http://{wifiManager.getIpAdress()}) into a browser.")
+   print(f"Done, your service is up now. Visit the interface by entering the IP-Adress (http://{wifiManager.getIpAddress()}) into a browser.")
