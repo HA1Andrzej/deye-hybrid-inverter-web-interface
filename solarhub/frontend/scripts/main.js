@@ -47,12 +47,11 @@ function setDisplayMode(mode) {
          maxWidth: "",
          margin: "",
          height: "",
-         backgroundColor: "",
+         background: "",
       });
       DOM.select("statsContainer").setStyle({
-         backgroundColor: "",
+         background: "",
       });
-      document.body.style.background = "";
       divider.setStyle({
          backgroundColor: "",
          opacity: "",
@@ -60,21 +59,23 @@ function setDisplayMode(mode) {
          borderRadius: "",
          width: "",
       });
+      document.documentElement.style.setProperty("--backgroundGradient", "");
+      document.body.style.background = "";
       const themeColor = getComputedStyle(document.documentElement).getPropertyValue("--themeColor").trim();
-      //setSafariUIColor(themeColor);
+      setSafariUIColor(themeColor);
    }
 
    if (mode == 1) {
+      const gradient = getComputedStyle(document.documentElement).getPropertyValue("--backgroundGradient").trim();
       DOM.select("liveContainer").setStyle({
          maxWidth: "calc(50% - 175px)",
          margin: "0px",
          height: "100vh",
-         backgroundColor: "transparent",
+         background: gradient,
       });
       DOM.select("statsContainer").setStyle({
-         //backgroundColor: "var(--themeColor)",
+         background: gradient,
       });
-      //document.body.style.background = "black";
       divider.setStyle({
          backgroundColor: "black",
          opacity: "1",
@@ -82,6 +83,8 @@ function setDisplayMode(mode) {
          borderRadius: "0",
          width: "175px",
       });
-      //setSafariUIColor("#000000");
+      document.documentElement.style.setProperty("--backgroundGradient", "transparent");
+      document.body.style.background = "black";
+      setSafariUIColor("#000000");
    }
 }

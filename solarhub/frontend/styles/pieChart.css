@@ -67,7 +67,7 @@
 
    /* Transparent Hole in the center */
    mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-   -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%
+   -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%);
 }
 /*.pieChart::after {
    content: "";
