@@ -133,6 +133,7 @@
 #debugText {
    margin: 20px;
    font-family: boldest;
+   text-align: center;
 }
 
 .simpleIconTextElement {

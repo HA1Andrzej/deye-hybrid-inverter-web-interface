@@ -382,6 +382,7 @@ function buildComparisonStats() {
       buildSimpleIconTextElement("oven.png", "hoursOven", "Stunden Backofen"),
       buildSimpleIconTextElement("microwave.png", "hoursMicrowave", "Stunden Mikrowelle"),
       buildSimpleIconTextElement("fridge.png", "hoursFridge", "Stunden Kühlschrank"),
+      buildSimpleIconTextElement("heater.png", "hoursHeater", "Stunden Heizlüfter"),
       buildSimpleIconTextElement("washing_machine.png", "timesWashing", "mal Wäsche waschen"),
       buildSimpleIconTextElement("vacuum.png", "hoursVacuum", "Stunden Staubsaugen"),
       buildSimpleIconTextElement("windturbine.png", "windRotations", "Windrad-Umdrehungen"),
@@ -731,6 +732,8 @@ function processStatistics(data) {
    DOM.select("hoursMicrowave").setText(hoursMicrowave);
    const hoursFridge = Math.round(data.sunEnergy / 50).toLocaleString("de-DE");
    DOM.select("hoursFridge").setText(hoursFridge);
+   const hoursHeater = Math.round(data.sunEnergy / 3000).toLocaleString("de-DE");
+   DOM.select("hoursHeater").setText(hoursHeater);
    const timesWashing = Math.round(data.sunEnergy / 900).toLocaleString("de-DE");
    DOM.select("timesWashing").setText(timesWashing);
    const hoursVacuum = Math.round(data.sunEnergy / 800).toLocaleString("de-DE");
@@ -810,13 +813,12 @@ function processStatistics(data) {
    DOM.select("minBatterySoCText").setText(Math.round(minSoc));
    DOM.select("avgBatterySoCText").setText(Math.round(avgSoc));
 
-   // Other fun statistics
-   debugText.appendText(`\n${numberOfSmartphoneCharges}x Smartphone laden`);
+   // Debug Text
    const lossesEnergy =
       data.values.reduce((acc, a) => {
          const timeDiff = a.timestamp_end - a.timestamp_start;
          const power = a.p_losses;
          return acc + power * timeDiff;
       }, 0) / 3_600_000;
-   debugText.appendText(`\n${(lossesEnergy / 1000).toTwoDecimalString(50)} kWh Verluste (Eigenverbrauch WR, Effizienz)`);
+   debugText.appendText(`\n${(lossesEnergy / 1000).toTwoDecimalString(50)} kWh Verluste durch Effizienzeinbußen und Eigenverbrauch des Systems`);
 }
