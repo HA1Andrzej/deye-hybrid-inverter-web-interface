@@ -347,7 +347,9 @@ function buildBatteryHealthContainer() {
    container.append(buildBigTitle("battery.png", "Batteriegesundheit", "So stark wurde die Batterie beansprucht"));
    const hContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", margin: "40px 0px" }).appendTo(container);
    hContainer.append(
-      DOM.create("div").setStyle({ display: "flex", flexDirection: "column", alignItems: "flex-end" }).append(DOM.create("t.value#batteryChargeText"), DOM.create("t.unit").setText("kWh geladen")),
+      DOM.create("div")
+         .setStyle({ display: "flex", flexDirection: "column", alignItems: "flex-end" })
+         .append(DOM.create("t.value#batteryChargeText").setStyle({ marginRight: "0" }), DOM.create("t.unit").setStyle({ textAlign: "right" }).setText("kWh geladen")),
       DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginRight: "20px" }),
    );
    hContainer.append(DOM.create("img [src=/assets/images/battery_large.png]").setStyle({ width: "60px", objectFit: "contain", marginTop: "-10px" }));
