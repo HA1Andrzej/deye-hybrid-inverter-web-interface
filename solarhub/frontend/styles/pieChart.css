@@ -5,16 +5,33 @@
    justify-content: center;
    position: relative;
 }
+
+.pieChart {
+   width: 160px;
+   height: 160px;
+   border-radius: 50%;
+   background-color: red;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin: 25px 0px;
+
+   /* Transparent Hole in the center */
+   mask: radial-gradient(farthest-side, transparent 60%, black 61%);
+   -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%);
+}
+
 .pieChartContainer .centerIcon {
    width: 25px;
    height: 25px;
-   position: absolute;
    background-size: contain;
    background-repeat: no-repeat;
    background-position: center;
    display: flex;
    align-items: center;
    justify-content: center;
+   position: absolute;
+   top: 92.5px;
 }
 .pieChartContainer .centerIcon::before {
    content: "";
@@ -55,28 +72,6 @@
    }
 }
 
-.pieChart {
-   width: 160px;
-   height: 160px;
-   border-radius: 50%;
-   background-color: red;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   margin: 25px 0px;
-
-   /* Transparent Hole in the center */
-   mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-   -webkit-mask: radial-gradient(farthest-side, transparent 60%, black 61%);
-}
-/*.pieChart::after {
-   content: "";
-   display: block;
-   width: 50%;
-   height: 50%;
-   background-color: var(--themeColor);
-   border-radius: 50%;
-   }*/
 .pieChartLegendContainer {
    display: flex;
    flex-direction: column;

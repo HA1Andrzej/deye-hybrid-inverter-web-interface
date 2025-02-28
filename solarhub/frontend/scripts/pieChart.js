@@ -3,8 +3,8 @@ import DOM from "./dom.js";
 export default class PieChart {
    constructor() {
       this.container = DOM.create("div.pieChartContainer");
-      this.centerIcon = DOM.create("div.centerIcon");
-      this.pieChart = DOM.create("div.pieChart").append(this.centerIcon).appendTo(this.container);
+      this.pieChart = DOM.create("div.pieChart").appendTo(this.container);
+      this.centerIcon = DOM.create("div.centerIcon").appendTo(this.container);
       this.legendContainer = DOM.create("div.pieChartLegendContainer").appendTo(this.container);
    }
    setData(data) {
