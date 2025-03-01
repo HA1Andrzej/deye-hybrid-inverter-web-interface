@@ -34,7 +34,7 @@
       --textColor: rgba(225, 230, 235, 1);
       --themeColor: rgba(0, 0, 0, 1);
       --foregroundColor: rgba(255, 255, 255, 0.05);
-      --backgroundGradient: linear-gradient(135deg, rgba(20, 45, 35), rgba(40, 50, 70));
+      --backgroundGradient: linear-gradient(135deg, rgba(20, 30, 40), rgba(0, 10, 20));
       --invertValue: 1;
    }
 }
@@ -163,18 +163,6 @@ html::before {
    backdrop-filter: blur(10px);
    -webkit-backdrop-filter: blur(10px);
    pointer-events: all;
-}
-
-#liveContainer {
-   height: auto;
-   background-color: var(--foregroundColor);
-   margin: 40px;
-   margin-right: 0px;
-   padding: 40px 70px;
-   padding-top: 45px;
-   box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.04);
-   max-width: 480px;
-   z-index: 2;
 }
 
 #loadingContainer {

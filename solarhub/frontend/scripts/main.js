@@ -48,6 +48,7 @@ function setDisplayMode(mode) {
          margin: "",
          height: "",
          background: "",
+         border: "",
       });
       DOM.select("statsContainer").setStyle({
          background: "",
@@ -72,6 +73,7 @@ function setDisplayMode(mode) {
          margin: "0px",
          height: "100vh",
          background: gradient,
+         border: "none",
       });
       DOM.select("statsContainer").setStyle({
          background: gradient,

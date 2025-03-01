@@ -14,11 +14,10 @@ const gridPowerBar = new StateBar();
 
 export async function build(mainContainer) {
    liveContainer.appendTo(mainContainer);
-   DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(liveContainer);
    buildSettingsButton();
 
    DOM.create("div#dateTimeContainer").append(timeTextView).append(dateTextView).appendTo(liveContainer);
-   DOM.create("div").setStyle({ flexGrow: 1 }).appendTo(liveContainer);
+   DOM.create("div#liveBadgeBox").append(DOM.create("div")).append(DOM.create("t").setText("LIVE")).appendTo(liveContainer);
 
    sunPowerBar.setIcon("sun.png");
    sunPowerBar.setColor({ r: 255, g: 199, b: 0 });
@@ -40,8 +39,6 @@ export async function build(mainContainer) {
 
    gridPowerBar.setUnit("Watt");
    gridPowerBar.container.appendTo(liveContainer);
-
-   DOM.create("div").setStyle({ flexGrow: 2 }).appendTo(liveContainer);
 
    updateLiveData();
    setInterval(updateLiveData, 500);

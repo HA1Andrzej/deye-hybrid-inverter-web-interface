@@ -1,3 +1,23 @@
+#liveContainer {
+   height: auto;
+   margin: 40px;
+   margin-right: 0px;
+   padding: 40px 70px;
+   padding-top: 45px;
+   box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.04);
+   background-color: rgba(255, 255, 255, 1);
+   max-width: 480px;
+   z-index: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+   #liveContainer {
+      box-shadow: none;
+      background-color: rgba(255, 255, 255, 0.04);
+      /*border: 2px solid rgba(255, 255, 255, 0.08);*/
+   }
+}
+
 #settingsButton {
    width: 60px;
    height: 60px;
@@ -27,7 +47,6 @@
 
 #dateTimeContainer {
    margin-top: 0px;
-   margin-bottom: 50px;
    display: flex;
    flex-direction: column;
    align-items: center;
@@ -43,4 +62,40 @@
    margin-top: -6px;
    opacity: 0.26;
    font-family: bold;
+}
+
+#liveBadgeBox {
+   padding: 5px 12px;
+   border-radius: 9px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: rgb(255, 34, 133);
+   margin-top: 20px;
+   margin-bottom: 40px;
+}
+
+#liveBadgeBox > div {
+   width: 10px;
+   height: 10px;
+   border-radius: 50%;
+   background-color: rgb(255, 255, 255);
+   margin-right: 7px;
+   animation: blinking 1s infinite;
+}
+
+@keyframes blinking {
+   0%,
+   100% {
+      opacity: 1;
+   }
+   50% {
+      opacity: 0.3;
+   }
+}
+
+#liveBadgeBox > t {
+   color: rgb(255, 255, 255);
+   font-family: boldest;
+   font-size: 80%;
 }
