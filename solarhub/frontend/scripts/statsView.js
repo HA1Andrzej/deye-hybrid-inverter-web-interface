@@ -146,10 +146,10 @@ function buildInfoElements() {
    const container = DOM.create("div").setStyle({ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "40px", flexWrap: "wrap", gap: "15px" });
    DOM.create("div")
       .appendTo(container)
-      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Peak"));
+      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Maximum"));
    DOM.create("div")
       .appendTo(container)
-      .append(buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Peak"));
+      .append(buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Maximum"));
    return container;
 }
 
@@ -628,12 +628,14 @@ function processStatistics(data) {
       DOM.select("costBoxWithPv").removeClass("costBoxRed").addClass("costBoxGreen");
    }
    DOM.select("costSavedValue").setText(savedMoney.toEuroString());
-   const amortized = Math.round((savedMoney / constants.totalSystemCost) * 10000) / 100;
-   amortizationBar.setValue(amortized);
+   const amortized = (savedMoney / constants.totalSystemCost) * 100;
+   amortizationBar.setValue(Math.round(amortized * 100) / 100);
    const timeSpan = data.end - data.start;
-   const timeLeft = (timeSpan / savedMoney) * constants.totalSystemCost;
+   const totalTime = (timeSpan / amortized) * 100;
+   const timeLeft = totalTime - timeSpan;
    const endDate = new Date(Date.now() + timeLeft).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
-   amortizationBar.setInfoText(`100% am ${endDate}`);
+   const years = (Math.round((totalTime / 1000 / 60 / 60 / 24 / 365.25) * 10) / 10).toLocaleString("de-DE");
+   amortizationBar.setInfoText(`100% nach ${years} Jahren am ${endDate}`);
    amortizationBar.setVisibility(selectedTabId == "custom");
 
    // Energy Mix

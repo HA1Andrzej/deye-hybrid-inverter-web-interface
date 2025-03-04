@@ -110,6 +110,11 @@ export default class LineGraph {
                ctx.lineTo(x, height);
                ctx.lineTo(pathStartX, height);
                ctx.fill();
+
+               ctx.beginPath();
+               ctx.arc(x, y, 4, 0, 2 * Math.PI);
+               ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+               ctx.fill();
                continue;
             }
             const nextX = (i + 1) * stepSize;
