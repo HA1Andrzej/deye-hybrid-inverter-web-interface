@@ -6,8 +6,8 @@
    },
    "telegram": {
       "enabled": true,
-      "botToken": "7338008570:AAGfAuDvdC48Nzm3q2GooS5Re292y5MHido",
-      "channelId": "-1002238032049"
+      "botToken": "__TELEGRAM_BOT_TOKEN__",
+      "channelId": "__TELEGRAM_CHANNEL_ID__"
    },
    "inverter": {
       "name": "Deye Hybrid 48V",

@@ -7,6 +7,7 @@ import re
 import socket
 import json
 import urllib.request
+import helper
 
 
 STARTUP_DELAY = 2*60
@@ -56,8 +57,7 @@ def getPublicIpAddress():
       return response.read().decode().strip()
 
 def startAP():
-   with open('config.json', 'r') as file:
-      config = json.load(file)
+   config = helper.getConfig()
    ssid = config["wifiAP"]["ssid"]
    password = config["wifiAP"]["password"]
    prefix = config["wifiAP"]["prefix"]

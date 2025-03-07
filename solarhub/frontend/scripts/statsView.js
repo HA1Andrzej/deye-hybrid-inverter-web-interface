@@ -357,7 +357,7 @@ function buildBatteryHealthContainer() {
       DOM.create("img.batteryArrowImage [src=/assets/images/battery_arrow.png]").setStyle({ marginLeft: "20px" }),
       DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).append(DOM.create("t.value#batteryDischargeText"), DOM.create("t.unit").setText("kWh entladen")),
    );
-   const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column", marginTop: "30px" }).appendTo(container);
+   const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
    elemContainer.append(
       buildSimpleIconTextElement("max_batt.png", "maxBatterySoCText", "% Höchststand"),
       buildSimpleIconTextElement("min_batt.png", "minBatterySoCText", "% Tiefststand"),

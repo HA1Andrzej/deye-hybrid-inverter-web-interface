@@ -1,6 +1,7 @@
 import dbManager
 import json
 import wifiManager
+import helper
 
 def request(path, params):
    liveDataJson = dbManager.query("SELECT * FROM live")
@@ -85,14 +86,15 @@ def request(path, params):
 
 
 
-   # General Data
+   # Config
    if path == "config":
-      with open('config.json', 'r') as config_file:
-         config_data = json.load(config_file)
+      config_data = helper.getConfig(False)
       return json.dumps(config_data)
+
+   # Get Wifi Networks
    if path == "networks":
       networks = wifiManager.getAvailableNetworks()
       return json.dumps(networks)
 
-   # Default Answer
+   # Fallback Answer
    return ("Invalid API Request: " + path)

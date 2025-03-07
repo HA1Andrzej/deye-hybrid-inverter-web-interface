@@ -7,6 +7,7 @@ import dbManager
 import json
 import glob
 import wifiManager
+import helper
 
 def start():
    global cursor, conn, config, batteryLimits
@@ -39,9 +40,8 @@ def start():
    # print(f"Value of register {zero_export_power_register} after writing -20: {result.registers[0] if result and not result.isError() else 'Error reading register'}")
 
 
-   # Reads data from config.json
-   with open('config.json', 'r') as file:
-      config = json.load(file)
+   # Get Config
+   config = helper.getConfig()
 
    # Log Data roughly once per second
    liveValueBuffer = {}

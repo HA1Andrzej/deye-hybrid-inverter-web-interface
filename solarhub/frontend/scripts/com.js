@@ -5,9 +5,9 @@ export async function getWifiNetworks() {
 }
 
 export async function getConfig() {
-   const res = await apiCall("/api/config", true);
-   console.log(res);
-   return res;
+   const config = await apiCall("/api/config", true);
+   console.log(config);
+   return config;
 }
 
 export async function getLiveData() {
