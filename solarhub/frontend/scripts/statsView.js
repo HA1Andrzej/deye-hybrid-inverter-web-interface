@@ -302,7 +302,7 @@ function buildCo2Container() {
 }
 
 function buildSimpleIconTextElement(icon, id, description) {
-   return DOM.create("div.simpleIconTextElement")
+   return DOM.create(`div.simpleIconTextElement#${id}Container`)
       .append(DOM.create(`img [src=/assets/images/${icon}]`))
       .append(DOM.create(`t#${id}`).setContent("0"))
       .append(DOM.create("t").setContent(description));
@@ -363,7 +363,8 @@ function buildBatteryHealthContainer() {
       buildSimpleIconTextElement("min_batt.png", "minBatterySoCText", "% Tiefststand"),
       buildSimpleIconTextElement("avg_batt.png", "avgBatterySoCText", "% Durchschnitt"),
       buildSimpleIconTextElement("batt_cycles.png", "batteryCyclesText", "Zyklen"),
-      buildSimpleIconTextElement("batt_soh.png", "batterySoHText", "% State of Health (± 5%)"),
+      buildSimpleIconTextElement("batt_soh.png", "batterySoHText", "% State of Health"),
+      buildSimpleIconTextElement("batt_rte.png", "batteryRteText", "% Round Trip Efficiency"),
    );
    return container;
 }
@@ -805,18 +806,29 @@ function processStatistics(data) {
       }
    });
    const totalCapacity = totalEnergy / (deltaSoc / 100);
-   const stateOfHealth = (totalCapacity / constants.battery.capacity) * 100;
+   const stateOfHealth = totalCapacity / constants.battery.capacity;
    const maxSoc = Math.max(...data.values.map((a) => a.batt_soc));
    const minSoc = Math.min(...data.values.map((a) => a.batt_soc));
    const avgSoc = data.values.reduce((acc, a) => acc + a.batt_soc, 0) / data.values.length;
 
+   const startSoC = data.values[0].batt_soc;
+   const endSoC = data.values[data.values.length - 1].batt_soc;
+   const socDiff = endSoC - startSoC;
+   const roundTripEfficiency = (batteryDischargeEnergy + (socDiff / 100) * totalCapacity) / batteryChargeEnergy;
+
    DOM.select("batteryChargeText").setText((batteryChargeEnergy / 1000).toTwoDecimalString(50));
    DOM.select("batteryDischargeText").setText((batteryDischargeEnergy / 1000).toTwoDecimalString(50));
-   DOM.select("batteryCyclesText").setText(batteryCycles.toTwoDecimalString(10));
-   DOM.select("batterySoHText").setText(Math.round(stateOfHealth));
    DOM.select("maxBatterySoCText").setText(Math.round(maxSoc));
    DOM.select("minBatterySoCText").setText(Math.round(minSoc));
    DOM.select("avgBatterySoCText").setText(Math.round(avgSoc));
+   DOM.select("batteryCyclesText").setText(batteryCycles.toTwoDecimalString(10));
+   DOM.select("batterySoHText").setText(Math.round(100 * stateOfHealth));
+   DOM.select("batteryRteText").setText(Math.round(100 * roundTripEfficiency));
+
+   if (totalEnergy < 2 * constants.battery.capacity) {
+      DOM.select("batterySoHText").setText("n/a");
+      DOM.select("batteryRteText").setText("n/a");
+   }
 
    // Debug Text
    const lossesEnergy =
