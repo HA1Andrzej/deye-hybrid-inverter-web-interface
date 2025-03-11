@@ -4,7 +4,7 @@
    margin-right: 0px;
    padding: 40px 70px;
    padding-top: 45px;
-   box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.04);
+   box-shadow: 0px 10px 40px rgba(20, 40, 60, 0.06);
    background-color: rgba(255, 255, 255, 1);
    max-width: 480px;
    z-index: 2;
@@ -66,11 +66,11 @@
 
 #liveBadgeBox {
    padding: 7px 12px;
-   border-radius: 9px;
+   border-radius: 11px;
    display: flex;
    align-items: center;
    justify-content: center;
-   background-color: rgb(255, 34, 133);
+   border: 2px solid rgb(255, 34, 133, 0.15);
    margin-top: 20px;
    margin-bottom: 40px;
 }
@@ -79,7 +79,7 @@
    width: 10px;
    height: 10px;
    border-radius: 50%;
-   background-color: rgb(255, 255, 255);
+   background-color: rgb(255, 34, 133);
    margin-right: 7px;
    animation: blinking 1s infinite;
 }
@@ -90,12 +90,13 @@
       opacity: 1;
    }
    50% {
-      opacity: 0.3;
+      opacity: 0.2;
    }
 }
 
 #liveBadgeBox > t {
-   color: rgb(255, 255, 255);
+   color: rgb(255, 34, 133);
    font-family: boldest;
    font-size: 80%;
+   letter-spacing: 1px;
 }
