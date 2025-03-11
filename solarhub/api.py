@@ -62,15 +62,10 @@ def request(path, params):
          key = params.get("key", 0);
          queryString = f"""
             SELECT
-               {key} AS val,
-               timestamp
-            FROM
-               logs
-            WHERE
-               timestamp BETWEEN {start} AND {end}
-            ORDER BY
-               {key} DESC
-            LIMIT 1;
+               MAX({key}) AS max,
+               MIN({key}) AS min
+            FROM logs
+            WHERE timestamp BETWEEN {start} AND {end};
          """
          data = dbManager.query(queryString)
          return json.dumps(json.loads(data)[0])

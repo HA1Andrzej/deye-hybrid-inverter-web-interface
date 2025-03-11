@@ -104,11 +104,11 @@ function updateMaxValues() {
    const start = end - 7 * 24 * 60 * 60 * 1000;
    let maxSunPower, maxLoadPower;
    getPeakValues("p_sun", start, end).then((res) => {
-      maxSunPower = Math.round(res.val);
+      maxSunPower = Math.round(res.max);
       sunPowerBar.setInfoText(`Max. ${maxSunPower.toLocaleString("de-DE")} Watt`);
    });
    getPeakValues("p_load", start, end).then((res) => {
-      maxLoadPower = Math.round(res.val);
+      maxLoadPower = Math.round(res.max);
       loadPowerBar.setInfoText(`Max. ${maxLoadPower.toLocaleString("de-DE")} Watt`);
    });
    const interval = setInterval(() => {

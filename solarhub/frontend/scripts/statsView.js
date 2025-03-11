@@ -146,10 +146,18 @@ function buildInfoElements() {
    const container = DOM.create("div").setStyle({ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "40px", flexWrap: "wrap", gap: "15px" });
    DOM.create("div")
       .appendTo(container)
-      .append(buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"), buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Maximum"));
+      .append(
+         buildSimpleIconTextElement("sun.png", "sunEnergy", "kWh Produziert"),
+         buildSimpleIconTextElement("max_sun.png", "maxSunPower", "kW Maximum"),
+         buildSimpleIconTextElement("min_sun.png", "minSunPower", "kW Minimum"),
+      );
    DOM.create("div")
       .appendTo(container)
-      .append(buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"), buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Maximum"));
+      .append(
+         buildSimpleIconTextElement("house.png", "loadEnergy", "kWh Verbraucht"),
+         buildSimpleIconTextElement("max_load.png", "maxLoadPower", "kW Maximum"),
+         buildSimpleIconTextElement("min_load.png", "minLoadPower", "kW Minimum"),
+      );
    return container;
 }
 
@@ -584,14 +592,17 @@ function processStatistics(data) {
 
    // Peak Values
    DOM.select("maxSunPower").setText("0,00");
+   DOM.select("minSunPower").setText("0,00");
    getPeakValues("p_sun", data.start, data.end).then((maxSunPower) => {
-      //const maxSunDate = new Date(maxSunPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-      DOM.select("maxSunPower").setText((maxSunPower.val / 1000).toTwoDecimalString());
+      DOM.select("maxSunPower").setText((maxSunPower.max / 1000).toTwoDecimalString());
+      DOM.select("minSunPower").setText((maxSunPower.min / 1000).toTwoDecimalString());
    });
+
    DOM.select("maxLoadPower").setText("0,00");
+   DOM.select("minLoadPower").setText("0,00");
    getPeakValues("p_load", data.start, data.end).then((maxLoadPower) => {
-      //const maxLoadDate = new Date(maxLoadPower.timestamp).toLocaleString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" });
-      DOM.select("maxLoadPower").setText((maxLoadPower.val / 1000).toTwoDecimalString());
+      DOM.select("maxLoadPower").setText((maxLoadPower.max / 1000).toTwoDecimalString());
+      DOM.select("minLoadPower").setText((maxLoadPower.min / 1000).toTwoDecimalString());
    });
 
    // Grid Bar
