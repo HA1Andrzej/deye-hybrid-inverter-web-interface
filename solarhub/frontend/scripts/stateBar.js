@@ -44,12 +44,11 @@ export default class StateBar {
    setColor(color) {
       this.color = color;
       this.barOuter.setStyle({
-         // backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 0.18)`,
          backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
       });
       this.barInner.setStyle({
          backgroundColor: `rgba(${color.r}, ${color.g}, ${color.b}, 1)`,
-         boxShadow: `0px 5px 20px rgba(${color.r}, ${color.g}, ${color.b}, 0.3)`,
+         boxShadow: `0px 2px 10px rgba(${color.r}, ${color.g}, ${color.b}, 0.3)`,
       });
    }
    setUnit(unit) {
