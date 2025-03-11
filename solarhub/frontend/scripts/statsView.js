@@ -279,7 +279,7 @@ function buildEnergyDistributionContainer() {
 
 // Builds the Pie Chart UI
 function buildSolarSourceContainer() {
-   energyDistributionPieChart.setIcon("sun.png", { r: 255, g: 199, b: 0 }, true);
+   solarSourcePieChart.setIcon("energy.png", { r: 255, g: 199, b: 0 }, false);
    const container = DOM.create("div");
    container.append(buildBigTitle("energy_mix.png", "Solaraufteilung", "Aus diesen Teilsystemen kommt unser Sonnenstrom"));
    container.append(solarSourcePieChart.container);

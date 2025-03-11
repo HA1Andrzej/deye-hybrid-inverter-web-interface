@@ -63,6 +63,9 @@
    0% {
       width: 30px;
       height: 30px;
+      opacity: 0;
+   }
+   15% {
       opacity: 1;
    }
    100% {
