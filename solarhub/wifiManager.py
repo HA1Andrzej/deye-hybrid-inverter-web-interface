@@ -7,7 +7,7 @@ import re
 import socket
 import json
 import urllib.request
-import helper
+
 
 
 STARTUP_DELAY = 2*60
