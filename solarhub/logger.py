@@ -159,7 +159,7 @@ def sendOneTimeMessage(message, condition, resetCondition):
 # Reads the value of a register at the given address
 def readRegister(address):
    try:
-      result = client.read_holding_registers(address, 1, slave=0, timeout=0.5)
+      result = client.read_holding_registers(address, 1, slave=1, timeout=0.5)
       return result
    except Exception as e:
       print(f"Exception occurred while reading register {address}: {e}")
@@ -174,7 +174,7 @@ def writeRegister(address, value, maxAttempts=5):
    attemptCounter = 0
    while attemptCounter < maxAttempts:
       try:
-         result = client.write_registers(address, [value], slave=0, timeout=0.5)
+         result = client.write_registers(address, [value], slave=1, timeout=0.5)
          if not result.isError():
             print(f"Successfully wrote {value} to register {address}")
             break
