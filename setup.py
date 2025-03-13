@@ -1,6 +1,7 @@
 import os
 import subprocess
-import time
+import times
+import socket
 
 def installDependencies():
    subprocess.run(['sudo', 'apt-get', 'update'])
@@ -37,8 +38,19 @@ def createService():
    except Exception as e:
       print(f"Fehler beim Erstellen oder Starten des Dienstes: {e}")
 
+
+def getIpAddress():
+   try:
+      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      s.connect(("8.8.8.8", 80))
+      ip_address = s.getsockname()[0]
+      s.close()
+      return ip_address
+   except Exception as e:
+      return f"Fehler: {e}"
+
 if __name__ == "__main__":
    installDependencies()
    createService()
    print("---------------------------------------")
-   print(f"Done, your service is up now. Visit the interface by entering the IP-Adress (http://{wifiManager.getIpAddress()}) into a browser.")
+   print(f"Done, everything's ready to go. Visit the interface by entering the local IP-Adress (http://{getIpAddress()}) into a browser.")

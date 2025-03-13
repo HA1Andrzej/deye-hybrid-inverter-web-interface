@@ -41,17 +41,6 @@ def isConnectedToWifi(host="8.8.8.8"):
          print(f"Fehler bei der Ausführung der Ping-Anfrage (Versuch {attempt + 1}): {e}")
    return False
 
-
-def getIpAddress():
-   try:
-      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-      s.connect(("8.8.8.8", 80))
-      ip_address = s.getsockname()[0]
-      s.close()
-      return ip_address
-   except Exception as e:
-      return f"Fehler: {e}"
-
 def getPublicIpAddress():
    with urllib.request.urlopen("https://api64.ipify.org?format=text") as response:
       return response.read().decode().strip()
