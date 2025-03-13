@@ -1,7 +1,6 @@
 import os
 import subprocess
 import time
-from solarhub import wifiManager
 
 def installDependencies():
    subprocess.run(['sudo', 'apt-get', 'update'])
