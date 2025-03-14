@@ -292,11 +292,11 @@ function buildCo2Container() {
    container.append(buildBigTitle("leaves.png", "Zielona energia", "Takie skutki ma instalacja solarna dla środowiska"));
    const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
    elemContainer.append(
-      buildSimpleIconTextElement("mass.png", "co2WeightText", "kg CO<sub>2</sub> eingespart"),
-      buildSimpleIconTextElement("balloon.png", "co2BalloonsText", "Luftballons voller CO<sub>2</sub>"),
-      buildSimpleIconTextElement("car.png", "co2CarKmText", "km Verbrenner äquivalent"),
-      buildSimpleIconTextElement("tree.png", "co2TreesText", "Bäume im gleichen Zeitraum"),
-      buildSimpleIconTextElement("coal.png", "co2CoalText", "kg Kohle nicht verbrannt"),
+      buildSimpleIconTextElement("mass.png", "co2WeightText", "kg CO<sub>2</sub> Uniknięta emisja"),
+      buildSimpleIconTextElement("balloon.png", "co2BalloonsText", "balonów wypełnionych CO<sub>2</sub>"),
+      buildSimpleIconTextElement("car.png", "co2CarKmText", "km przejechanych samochodem spalinowym"),
+      buildSimpleIconTextElement("tree.png", "co2TreesText", "uratowanych drzew"),
+      buildSimpleIconTextElement("coal.png", "co2CoalText", "kg węgla nie zostało spalone"),
       //buildSimpleIconTextElement("", "", "Liter Wasser gespart"),
       //buildSimpleIconTextElement("", "", "Gramm Feinstaub vermieden"),
       //buildSimpleIconTextElement("", "", "Gramm Stick- & Schwefeloxide vermieden"),
@@ -319,7 +319,7 @@ function buildSimpleIconTextElement(icon, id, description) {
 // Builds the Self Sufficiency and Self Use Bar UI
 function buildIndependencyBars() {
    const barContainer = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
-   barContainer.append(buildBigTitle("fist.png", "Unabhängigkeit", "So gut würden wir ohne das Stromnetz auskommen"));
+   barContainer.append(buildBigTitle("fist.png", "Samowystarczalność", "Nasza samowystarczalność bez sieci energetycznej"));
 
    selfSufficiencyBar.center();
    selfSufficiencyBar.setColor({ r: 0, g: 210, b: 140 });
