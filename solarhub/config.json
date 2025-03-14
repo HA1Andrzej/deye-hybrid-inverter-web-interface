@@ -5,12 +5,13 @@
       "charge": { "limit": 0.9, "register": 108, "maxCurrent": 180 }
    },
    "telegram": {
-      "enabled": true,
+      "enabled": false,
       "botToken": "__TELEGRAM_BOT_TOKEN__",
       "channelId": "__TELEGRAM_CHANNEL_ID__"
    },
    "inverter": {
       "name": "Deye Hybrid 48V",
+      "slave_id": 0,
       "sources": [
          "https://diysolarforum.com/threads/modbus-comms-with-deye-inverter.46197/",
          "https://github.com/StephanJoubert/home_assistant_solarman/blob/main/custom_components/solarman/inverter_definitions/deye_sg04lp3.yaml"

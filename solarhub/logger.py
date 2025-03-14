@@ -158,8 +158,9 @@ def sendOneTimeMessage(message, condition, resetCondition):
 
 # Reads the value of a register at the given address
 def readRegister(address):
+   slaveId = config["inverter"]["slave_id"]
    try:
-      result = client.read_holding_registers(address, 1, slave=0, timeout=0.5)
+      result = client.read_holding_registers(address, 1, slave=slaveId, timeout=0.5)
       return result
    except Exception as e:
       print(f"Exception occurred while reading register {address}: {e}")
@@ -167,15 +168,16 @@ def readRegister(address):
 
 # Writes the given value to the given register
 registerCache = {}
-def writeRegister(address, value, maxAttempts=5):
+def writeRegister(address, value, maxAttempts=7):
    global registerCache
    if registerCache.get(address) == value: return
-   registerCache[address] = value
+   slaveId = config["inverter"]["slave_id"]
    attemptCounter = 0
    while attemptCounter < maxAttempts:
       try:
-         result = client.write_registers(address, [value], slave=0, timeout=0.5)
+         result = client.write_registers(address, [value], slave=slaveId, timeout=0.5)
          if not result.isError():
+            registerCache[address] = value
             print(f"Successfully wrote {value} to register {address}")
             break
       except Exception as e:
