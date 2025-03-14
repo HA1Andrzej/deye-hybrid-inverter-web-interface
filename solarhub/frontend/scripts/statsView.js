@@ -190,7 +190,7 @@ function buildGraphCheckBoxes() {
 // Builds the Grid Ratio Bar UI
 function buildGridRatioBar() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
-   container.append(buildBigTitle("grid_export.png", "Netzbilanz", "So viel Strom wurde ans Netz verkauft und aus dem Netz eingekauft"));
+   container.append(buildBigTitle("grid_export.png", "Bilans sieci", "Tyle energii zostało sprzedane do sieci a tyle zakupione z sieci"));
    const ratioContainer = DOM.create("div#ratioContainer").appendTo(container);
 
    const valuesContainer = DOM.create("div#ratioValuesContainer").appendTo(ratioContainer);
@@ -219,8 +219,8 @@ function buildGridRatioBar() {
 // Builds the Finances UI
 function buildFinancesContainer() {
    const financesContainer = DOM.create("div");
-   // financesContainer.append(buildBigTitle("coin.png", "Kosten", "So viel Geld sparen wir uns Dank der Solaranlage"));
-   financesContainer.append(buildBigTitle("coin.png", "Kosten", "So viel Geld konnte durch die Solaranlage eingespart werden"));
+   // financesContainer.append(buildBigTitle("coin.png", "Koszty", "Tyle pieniędzy oszczędzamy dzięki instalacji PV"));
+   financesContainer.append(buildBigTitle("coin.png", "Koszty", "Tyle pieniędzy można było zaoszczędzić dzięki instalacji PV"));
    const financesInnerContainer = DOM.create("div")
       .setStyle({
          width: "100%",
@@ -263,7 +263,7 @@ function buildFinancesContainer() {
 function buildEnergyMixContainer() {
    energyMixPieChart.setIcon("house.png", { r: 96, g: 183, b: 255 }, false);
    const container = DOM.create("div");
-   container.append(buildBigTitle("energy_mix.png", "Strommix", "Aus diesen Quellen kommt der von uns verbrauchte Strom"));
+   container.append(buildBigTitle("energy_mix.png", "Bilans energetyczny", "Z tych źródeł pochodzi zużywana przez nas energia elektryczna"));
    container.append(energyMixPieChart.container);
    return container;
 }
@@ -272,7 +272,7 @@ function buildEnergyMixContainer() {
 function buildEnergyDistributionContainer() {
    energyDistributionPieChart.setIcon("sun.png", { r: 255, g: 199, b: 0 }, true);
    const container = DOM.create("div");
-   container.append(buildBigTitle("energy_mix.png", "Stromverteilung", "Dahin fließt der von der Solaranlage produzierte Strom"));
+   container.append(buildBigTitle("energy_mix.png", "Przepływ energii", "Tam płynie energia elektryczna wyprodukowana przez instalację PV"));
    container.append(energyDistributionPieChart.container);
    return container;
 }
@@ -281,7 +281,7 @@ function buildEnergyDistributionContainer() {
 function buildSolarSourceContainer() {
    solarSourcePieChart.setIcon("energy.png", { r: 255, g: 199, b: 0 }, false);
    const container = DOM.create("div");
-   container.append(buildBigTitle("energy_mix.png", "Solaraufteilung", "Aus diesen Teilsystemen kommt unser Sonnenstrom"));
+   container.append(buildBigTitle("energy_mix.png", "Przepływ energii PV", "Żródła energii PV"));
    container.append(solarSourcePieChart.container);
    return container;
 }
@@ -289,7 +289,7 @@ function buildSolarSourceContainer() {
 // Builds the CO2 UI
 function buildCo2Container() {
    const container = DOM.create("div").setStyle({ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" });
-   container.append(buildBigTitle("leaves.png", "Nachhaltigkeit", "Diese Auswirkungen hat die Solaranlage auf Umwelt und Gesundheit"));
+   container.append(buildBigTitle("leaves.png", "Zielona energia", "Takie skutki ma instalacja solarna dla środowiska"));
    const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
    elemContainer.append(
       buildSimpleIconTextElement("mass.png", "co2WeightText", "kg CO<sub>2</sub> eingespart"),
@@ -383,10 +383,10 @@ function buildComparisonStats() {
    container.append(buildBigTitle("gears.png", "Vergleichswerte", "Die produzierte Menge an Energie würde reichen für..."));
    const elemContainer = DOM.create("div").setStyle({ display: "flex", flexDirection: "column" }).appendTo(container);
    elemContainer.append(
-      buildSimpleIconTextElement("smartphone.png", "smartphoneCharges", "mal Smartphone laden"),
-      buildSimpleIconTextElement("boiling_water.png", "litersOfBoilingWater", "Liter Wasser kochen"),
-      buildSimpleIconTextElement("car.png", "kilometersECar", "km E-Auto fahren"),
-      buildSimpleIconTextElement("bike.png", "kilometersBike", "km Fahrrad fahren"),
+      buildSimpleIconTextElement("smartphone.png", "smartphoneCharges", "godz. ładowania telefonu"),
+      buildSimpleIconTextElement("boiling_water.png", "litersOfBoilingWater", "Litrów zagotowanej wody"),
+      buildSimpleIconTextElement("car.png", "kilometersECar", "km przejechanych autem elektrycznym"),
+      buildSimpleIconTextElement("bike.png", "kilometersBike", "km przejechanych na rowerze elekrycznym"),
       buildSimpleIconTextElement("coffee.png", "timesCoffee", "mal Kaffee machen"),
       buildSimpleIconTextElement("lightbulb.png", "hoursLight", "Stunden einen Raum beleuchten"),
       buildSimpleIconTextElement("tv.png", "hoursTv", "Stunden Fernsehen"),
