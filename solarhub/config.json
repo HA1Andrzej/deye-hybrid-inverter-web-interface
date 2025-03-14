@@ -11,7 +11,7 @@
    },
    "inverter": {
       "name": "Deye Hybrid 48V",
-      "slave_id": 0,
+      "slave_id": 1,
       "sources": [
          "https://diysolarforum.com/threads/modbus-comms-with-deye-inverter.46197/",
          "https://github.com/StephanJoubert/home_assistant_solarman/blob/main/custom_components/solarman/inverter_definitions/deye_sg04lp3.yaml"
